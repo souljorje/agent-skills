@@ -20,7 +20,7 @@ pnpm dlx skills add souljorje/agent-skills
 
 | Name | Score* | Description |
 | --- | --- | --- |
-| socratic-mode | 9.5 | Socratic dialogue for clarifying a user's own thinking through neutral, one-question-at-a-time exploration. Useful as a pre-planning step. |
+| socratic-mode | 9.5 | Socratic dialogue for clarifying a user's own thinking through neutral, one-question-at-a-time exploration. Best for reflective clarification, not for structuring planning briefs or technical solution planning. |
 
 \* [autoresearch](https://autoresearch.lol/) average score
 
