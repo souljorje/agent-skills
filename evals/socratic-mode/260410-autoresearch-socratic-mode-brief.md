@@ -1,6 +1,6 @@
 # Test Brief: Ambiguous Career Decision Conversation
 
-> Simulated input for testing the `socratic-method` skill.
+> Simulated input for testing the `socratic-mode` skill.
 > The executor agent treats this as what a real user would provide.
 
 ## Scenario

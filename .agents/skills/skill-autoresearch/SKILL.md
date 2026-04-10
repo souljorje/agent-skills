@@ -2,7 +2,7 @@
 name: skill-autoresearch
 description: "Iterative improvement loop for skills — launches executor agents that follow a skill procedure, scores output quantitatively, fixes issues, and repeats until stop criteria are met. Inspired by Karpathy's autoresearch pattern applied to agent skill procedures."
 summary: "Meta-skill that stress-tests and improves other skills through an automated loop: create test scenario → executor agent follows skill in worktree → score confusion + output quality → fix skill files → repeat until convergence."
-version: 1.0.0
+version: 1.0.1
 template: skill-definition
 created: 2026-03-16
 last_updated: 2026-03-16
@@ -112,7 +112,7 @@ A test brief is a simulated set of "source materials" that an executor agent use
 - Should include at least one edge case (unusual value, ambiguous input, boundary condition)
 - Must be self-contained — the executor should not need external resources
 
-**Where to save:** `my-lib/runtime/.tmp/YYMMDD-autoresearch-{skill-name}-brief.md`
+**Where to save:** `my-lib/evals/{skill-name}/YYMMDD-autoresearch-{skill-name}-brief.md`
 
 **Template:**
 

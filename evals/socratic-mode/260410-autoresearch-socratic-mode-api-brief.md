@@ -1,6 +1,6 @@
 # Test Brief: Wants to Understand APIs but Feels Lost
 
-> Simulated input for testing the `socratic-method` skill.
+> Simulated input for testing the `socratic-mode` skill.
 > The executor agent treats this as what a real user would provide.
 
 ## Scenario
