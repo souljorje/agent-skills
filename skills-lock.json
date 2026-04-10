@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "skill-autoresearch": {
+      "source": "Pvragon/ai-workspace-reference",
+      "sourceType": "github",
+      "computedHash": "40934cbfeba12060d6db9e368995dff20ec13d6ad3aa537020759b2f1bca3b24"
+    }
+  }
+}
