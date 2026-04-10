@@ -1,6 +1,6 @@
 ---
 name: socratic-mode
-description: Single-question Socratic dialogue for clarifying a user's own thinking. No solutions until intent, motives, and constraints are clear. Use for vague requests, abstract ideas, explaining a concept, or as a pre-planning step before switching to planning mode.
+description: Socratic dialogue for clarifying a user's own thinking through neutral, one-question-at-a-time exploration. No solutions until intent, motives, assumptions, and constraints are clear. Use for vague requests, abstract ideas, explaining a concept, or as a pre-planning step.
 metadata: {"version":"1.0.0","last_updated":"2026-04-10"}
 ---
 
