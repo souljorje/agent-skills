@@ -1,33 +1,36 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.5","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.7","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
 
 Use this skill to make Markdown docs easier for AI agents to read incrementally. Prefer exact paths, stable headings, and local context over prose that requires cross-file guessing.
 
+## Model
+
+Treat the docs as an explicit file graph.
+
+- unit: one logical documentation node that should be readable from one canonical starting file
+- entrypoint: the canonical starting file for a unit; exactly one of `name.md` or `name/index.md`
+- child: a file or folder-backed subtopic reached by one explicit `Source:` line from a parent file
+- leaf: a child with no further `Source:` lines
+- inline section: a heading whose content stays in the file where the heading appears
+- extracted section: a heading whose content is moved to a child and replaced by `Source:`
+- public child: a sibling file or folder intended to be part of the unit, not scratch or unrelated repo content
+
+Use these terms consistently when reading, splitting, validating, and reporting.
+
 ## Structure
 
-Each logical doc unit has one entrypoint file:
-
-```text
-name.md
-```
-
-or:
-
-```text
-name/
-  index.md
-```
+Each unit has one entrypoint file: `name.md` or `name/index.md`.
 
 Do not keep both `name.md` and `name/index.md` for the same unit.
 
 `index.md` is only a folder convention. There is no implicit directory lookup. References must always point to the exact file path.
 
-Entrypoints may mix short inline sections with extracted sections:
+Entrypoints may mix inline sections and extracted sections:
 
 ```md
 # Purpose
@@ -46,25 +49,46 @@ Source: ./billing/index.md
 
 Read inline text directly.
 
-Follow only explicit relative `Source:` paths:
+Follow only explicit relative `Source:` paths from parent to child:
 
 - `Source: ./file.md`
 - `Source: ./folder/index.md`
 
-Paths resolve relative to the file that contains the `Source:` line. Example: in `docs/getting-started.md`, `Source: ./local-setup.md` means `docs/local-setup.md`, not repo root.
+Paths resolve relative to the file that contains the `Source:` line. Example: in `docs/getting-started.md`, `Source: ./local-setup.md` means the child `docs/local-setup.md`, not repo root.
 
-Read lazily. Do not scan unrelated siblings unless validation requires it.
+Read lazily. Do not scan unrelated siblings unless validation requires it. Stay on the explicit unit graph.
+
+## Procedure
+
+Use this transform order. Do not skip ahead.
+
+1. identify the unit boundary and canonical entrypoint
+2. inventory the entrypoint headings in order
+3. inventory existing public children already adjacent to the entrypoint
+4. classify each heading as inline section, extracted section, or folder-backed topic using the split rules below
+5. choose the child path for each extracted section; reuse a good existing public child when it already matches the topic
+6. rewrite the parent in place, preserving heading order, replacing moved content with the same heading plus `Source:`
+7. write each child file with the moved content in the same logical order
+8. validate the resulting unit and fix issues in the validation order below
+
+Constraints during the procedure:
+
+- do not change the unit entrypoint unless the user asks
+- do not reorder headings just to match filenames
+- do not create duplicate children for content that already has a good public child
+- do not absorb scratch notes or unrelated repo docs into the unit graph
+- stop after the unit is explicit and scannable; do not continue decomposing for symmetry
 
 ## Split
 
-Split only when it improves readability and preserves meaning, order, and references.
+Split only when it improves readability and preserves meaning, order, and parent-child references.
 
 Rules:
 
 - `<=200` lines: keep as one file unless the user asks for decomposition
 - `>200` lines: split only where the result is clearer
 - do not split for symmetry; one large section is fine if keeping it whole is clearer
-- prefer one split per coherent topic or workflow
+- prefer one extracted child per coherent topic or workflow
 - use flat `Source: ./name.md` for one coherent extracted topic, even if it is large
 - use flat files for long linear sections such as numbered steps, logs, examples, and FAQs unless they contain clear internal subtopics
 - use `Source: ./name/index.md` only when the topic needs two or more descriptive child files
@@ -73,7 +97,7 @@ Rules:
 - never create vague chunks like `part-1.md`
 - stop splitting when the entrypoint is scannable
 
-When you split, replace the moved content in the entrypoint with the heading plus `Source:`. Do not keep the same substantial content both inline and external.
+When you split, replace the moved content in the parent with the heading plus `Source:`. Do not keep the same substantial content both inline and extracted.
 
 ## Examples
 
@@ -145,8 +169,8 @@ Before finishing, check:
 - one entrypoint only: `name.md` or `name/index.md`, not both
 - every `Source:` target exists
 - every `Source:` path resolves relative to the file containing it
-- every public sibling file or folder is referenced from the entrypoint
-- no entry has both substantial inline content and `Source:` for the same topic
+- every public child in the unit is reachable from the entrypoint
+- no parent has both substantial inline content and `Source:` for the same topic
 - no extracted child has a vague name
 - folder-backed sources have `index.md`
 - nesting is no deeper than needed
