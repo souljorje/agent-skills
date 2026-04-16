@@ -17,5 +17,6 @@ Personal repo for authored agent skills and their eval briefs.
 
 - On skill changes, run skill-autoresearch with at least 3 briefs, update the Skills table in [README.md](./README.md), do not regress the average below the current baseline
 - Do not mix evals content to skills
+- Split work into multiple commits when changes cover distinct points or independently reviewable units
 - Every skill needs metadata; update last_updated and version before commit when needed
 - Use conventional commits: feat skills, tests evals, docs repo docs, chore structure
