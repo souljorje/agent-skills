@@ -15,6 +15,7 @@ Personal repo for authored agent skills and their eval briefs.
 
 ## Development
 
-- On skills changes ensure running `skill-autoresearch` with min 3 briefs and update `Skills` table in [README.md](./README.md)
-- Ensure each skill has `metadata` field (check format in any existing skill)
-- Use conventional-commit style commit messages: `feat` - skills updates; `tests` - evals updates; `docs` - repo docs update; `chore` - structural updates
+- On skill changes, run skill-autoresearch with at least 3 briefs, update the Skills table in [README.md](./README.md), do not regress the average below the current baseline
+- Do not mix evals content to skills
+- Every skill needs metadata; update last_updated and version before commit when needed
+- Use conventional commits: feat skills, tests evals, docs repo docs, chore structure

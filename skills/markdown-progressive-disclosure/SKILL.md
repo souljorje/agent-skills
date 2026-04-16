@@ -1,16 +1,16 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.1","last_updated":"2026-04-15"}
+metadata: {"version":"1.0.5","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
 
-Use this skill to read, navigate, or decompose Markdown context files without turning every detail into top-level noise.
+Use this skill to make Markdown docs easier for AI agents to read incrementally. Prefer exact paths, stable headings, and local context over prose that requires cross-file guessing.
 
-## Model
+## Structure
 
-A **node** is one logical context unit. It has exactly one entrypoint:
+Each logical doc unit has one entrypoint file:
 
 ```text
 name.md
@@ -23,9 +23,11 @@ name/
   index.md
 ```
 
-Never keep both `name.md` and `name/index.md` for the same node.
+Do not keep both `name.md` and `name/index.md` for the same unit.
 
-Entrypoints may mix short inline content with extracted sources:
+`index.md` is only a folder convention. There is no implicit directory lookup. References must always point to the exact file path.
+
+Entrypoints may mix short inline sections with extracted sections:
 
 ```md
 # Purpose
@@ -34,133 +36,129 @@ Short inline text.
 # Workflow
 Source: ./workflow.md
 
-# Billing Playbook
-Source: ./billing-playbook/index.md
+# Billing
+Source: ./billing/index.md
 ```
 
-`Source:` is the only reference directive. It may point to a file or to a folder-backed entrypoint. Source-only references do **not** mean every section must be extracted; keep short sections inline when that is clearer.
+`Source:` is the only reference directive.
 
 ## Read
 
-References must use explicit relative paths.
+Read inline text directly.
 
-Read lazily:
+Follow only explicit relative `Source:` paths:
 
-- use inline text directly
-- follow `Source: ./file.md` only when needed
-- follow `Source: ./folder/index.md` when the source is folder-backed
-- do not scan unrelated sibling files unless validation requires it
+- `Source: ./file.md`
+- `Source: ./folder/index.md`
+
+Paths resolve relative to the file that contains the `Source:` line. Example: in `docs/getting-started.md`, `Source: ./local-setup.md` means `docs/local-setup.md`, not repo root.
+
+Read lazily. Do not scan unrelated siblings unless validation requires it.
 
 ## Split
 
 Split only when it improves readability and preserves meaning, order, and references.
 
-Default policy:
+Rules:
 
 - `<=200` lines: keep as one file unless the user asks for decomposition
 - `>200` lines: split only where the result is clearer
-- one large section is allowed; size imbalance alone is not a reason to split
+- do not split for symmetry; one large section is fine if keeping it whole is clearer
 - prefer one split per coherent topic or workflow
-- prefer flat `Source: ./name.md` for one coherent extracted topic, even if it is large
-- use flat files for long linear sections, such as numbered steps, logs, examples, or FAQs, unless they contain clear internal topics
-- use folder-backed `Source: ./name/index.md` only when the topic needs two or more descriptive child files
+- use flat `Source: ./name.md` for one coherent extracted topic, even if it is large
+- use flat files for long linear sections such as numbered steps, logs, examples, and FAQs unless they contain clear internal subtopics
+- use `Source: ./name/index.md` only when the topic needs two or more descriptive child files
 - do not create a folder that contains only `index.md` unless the user explicitly wants folder layout
 - child filenames must be descriptive
-- never create meaningless chunks like `part-1.md` or `part-2.md`
+- never create vague chunks like `part-1.md`
 - stop splitting when the entrypoint is scannable
 
-When splitting, move the content out of the entrypoint and leave only the heading plus `Source:`. Do not keep the same substantial content inline and in the source file.
+When you split, replace the moved content in the entrypoint with the heading plus `Source:`. Do not keep the same substantial content both inline and external.
 
 ## Examples
 
-Minimal split:
+### Default split
 
 ```text
-support-agent.md
-billing-workflow.md
+guide.md
+setup.md
+workflow.md
 ```
 
+`guide.md`:
 ```md
 # Purpose
 Short inline text.
 
-# Billing Workflow
-Source: ./billing-workflow.md
+## Quick reference
+Some text.
+
+## Setup
+Source: ./setup.md
+
+## Workflow
+Source: ./workflow.md
 ```
 
-Huge-file split:
+### Folder-backed split
 
 ```text
-operations-manual.md
-billing-playbook.md
-access-recovery.md
-incident-response.md
-trust-and-safety.md
-faq-edge-cases.md
-```
-
-```md
-# Purpose
-Short inline text.
-
-# Billing Playbook
-Source: ./billing-playbook.md
-
-# Access Recovery
-Source: ./access-recovery.md
-
-# Incident Response
-Source: ./incident-response.md
-```
-
-Folder-backed split:
-
-```text
-operations-manual.md
-billing-playbook/
+guide.md
+detailed-process.md
+setup/
   index.md
-  eligibility.md
+  overview.md
   exceptions.md
 ```
 
+`guide.md`:
 ```md
-# Billing Playbook
-Source: ./billing-playbook/index.md
+# Purpose
+Short inline text
+
+## Quick reference
+Some text
+
+## Setup
+Source: ./setup/index.md
+
+## Workflow
+Source: ./workflow.md
 ```
 
+`setup/index.md`:
 ```md
-# Billing Playbook
-
-Source: ./eligibility.md
-Source: ./exceptions.md
+# Topic
+Source: ./topic/index.md
 ```
 
-Naming defaults:
+### Naming defaults:
 
 - `# Purpose` -> `purpose.md`
 - `# FAQ / Edge Cases` -> `faq-edge-cases.md`
-- `# Trust And Safety` -> `trust-and-safety/index.md`
+- `# Background Notes` -> `background-notes/index.md`
 
 ## Validate
 
 Before finishing, check:
 
-- every node has one entrypoint: `name.md` or `name/index.md`, not both
+- one entrypoint only: `name.md` or `name/index.md`, not both
 - every `Source:` target exists
+- every `Source:` path resolves relative to the file containing it
 - every public sibling file or folder is referenced from the entrypoint
 - no entry has both substantial inline content and `Source:` for the same topic
-- no extracted child uses a vague name such as `part-1.md`
+- no extracted child has a vague name
 - folder-backed sources have `index.md`
-- nesting stays as shallow as the content allows
+- nesting is no deeper than needed
 
-These are manual checks; no built-in validator is required.
+These are manual checks. No built-in validator is required.
 
 Fix in this order:
 
 1. duplicate or missing entrypoints
-2. broken `Source:` references
+2. broken `Source:` paths
 3. hidden public files
-4. mixed inline/source truth
+4. mixed inline/external truth
 5. vague names
 6. over-splitting or needless depth
 
