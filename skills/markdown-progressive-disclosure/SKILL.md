@@ -1,7 +1,7 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.8","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.9","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
@@ -18,7 +18,22 @@ Treat the docs as an explicit file graph.
 - leaf: a child with no further `Source:` lines
 - inline section: a heading whose content stays in the file where the heading appears
 - extracted section: a heading whose content is moved to a child and replaced by `Source:`
-- public child: a sibling file or folder intended to be part of the unit, not scratch or unrelated repo content
+- public child: a file or folder intended to be part of the same unit, not merely a nearby sibling
+
+Treat `public child` narrowly.
+
+A file or folder counts as a public child only if at least one of these is true:
+
+- it is already reached by an explicit `Source:` path in the unit
+- the user explicitly says it belongs to the unit
+- it is an obvious unit-owned companion to the entrypoint topic and reusing it avoids creating a duplicate child
+
+Do not treat a file or folder as a public child just because it is adjacent. These do not count as public children by default:
+
+- scratch notes, drafts, TODOs, logs, temp files, or analyst notes
+- another unit's entrypoint
+- generic repo docs that live nearby but are not part of the same topic
+- files whose relationship to the unit is unclear
 
 Use these terms consistently when reading, splitting, validating, and reporting.
 
@@ -64,7 +79,7 @@ Use this transform order. Do not skip ahead.
 
 1. identify the unit boundary and canonical entrypoint
 2. inventory the entrypoint headings in order
-3. inventory existing public children already adjacent to the entrypoint
+3. inventory existing public children already adjacent to the entrypoint; classify adjacency explicitly, do not assume every sibling belongs to the unit
 4. classify each heading as inline section, extracted section, or folder-backed topic using the split rules below
 5. choose the child path for each extracted section; reuse a good existing public child when it already matches the topic
 6. rewrite the parent in place, preserving heading order, replacing moved content with the same heading plus `Source:`
@@ -77,6 +92,7 @@ Constraints during the procedure:
 - do not reorder headings just to match filenames
 - do not create duplicate children for content that already has a good public child
 - do not absorb scratch notes or unrelated repo docs into the unit graph
+- do not label ambiguous adjacent files as public children without evidence from the unit or the user
 - stop after the unit is explicit and scannable; do not continue decomposing for symmetry
 
 ## Split
@@ -170,7 +186,7 @@ Before finishing, check:
 - every `Source:` target exists
 - every `Source:` path resolves relative to the file containing it
 - the `Source:` graph has no cycles
-- every public child in the unit is reachable from the entrypoint
+- every public child in the unit is reachable from the entrypoint, and only explicit unit-owned companions should be treated as public children
 - each child in a unit has one parent by default; do not share one child across multiple parents unless the user explicitly wants shared docs
 - in a folder-backed topic, every public descendant belongs to that folder-backed subtree and is reachable from its `index.md`
 - traversal order is stable: read children in the same order their `Source:` lines appear in the parent
