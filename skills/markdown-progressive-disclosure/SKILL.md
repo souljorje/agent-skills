@@ -1,7 +1,7 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.9","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.10","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
@@ -60,6 +60,23 @@ Source: ./billing/index.md
 
 `Source:` is the only reference directive.
 
+## Heading Identity
+
+Treat heading text and file paths as separate concerns.
+
+- preserve the original heading text in the parent when replacing content with `Source:`
+- sanitize filenames, not headings; `# FAQ / Edge Cases` may map to `faq-edge-cases.md`
+- preserve heading order and relative subheading order inside the moved content
+- if a child starts with a repeated top heading for standalone readability, use the same heading text as the extracted parent topic
+- do not rename a topic in the child just to match the filename
+- for folder-backed topics, `index.md` should use the same topic heading as the parent, not a generic placeholder like `# Topic`
+
+Default pattern:
+
+- parent keeps the original heading plus `Source:`
+- flat child usually starts with the moved body and subheadings
+- repeat the top heading in the child only when standalone readability clearly benefits
+
 ## Read
 
 Read inline text directly.
@@ -82,8 +99,8 @@ Use this transform order. Do not skip ahead.
 3. inventory existing public children already adjacent to the entrypoint; classify adjacency explicitly, do not assume every sibling belongs to the unit
 4. classify each heading as inline section, extracted section, or folder-backed topic using the split rules below
 5. choose the child path for each extracted section; reuse a good existing public child when it already matches the topic
-6. rewrite the parent in place, preserving heading order, replacing moved content with the same heading plus `Source:`
-7. write each child file with the moved content in the same logical order
+6. rewrite the parent in place, preserving heading order and exact heading identity, replacing moved content with the same heading plus `Source:`
+7. write each child file with the moved content in the same logical order and preserve heading identity rules
 8. validate the resulting unit and fix issues in the validation order below
 
 Constraints during the procedure:
@@ -93,6 +110,7 @@ Constraints during the procedure:
 - do not create duplicate children for content that already has a good public child
 - do not absorb scratch notes or unrelated repo docs into the unit graph
 - do not label ambiguous adjacent files as public children without evidence from the unit or the user
+- do not rename extracted headings for filesystem convenience
 - stop after the unit is explicit and scannable; do not continue decomposing for symmetry
 
 ## Split
@@ -168,8 +186,11 @@ Source: ./workflow.md
 
 `setup/index.md`:
 ```md
-# Topic
-Source: ./topic/index.md
+# Setup
+Source: ./overview.md
+
+## Exceptions
+Source: ./exceptions.md
 ```
 
 ### Naming defaults:
@@ -190,6 +211,7 @@ Before finishing, check:
 - each child in a unit has one parent by default; do not share one child across multiple parents unless the user explicitly wants shared docs
 - in a folder-backed topic, every public descendant belongs to that folder-backed subtree and is reachable from its `index.md`
 - traversal order is stable: read children in the same order their `Source:` lines appear in the parent
+- extracted topics preserve heading identity; filenames may change, topic labels should not
 - no parent has both substantial inline content and `Source:` for the same topic
 - no extracted child has a vague name
 - folder-backed sources have `index.md`
