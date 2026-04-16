@@ -42,13 +42,13 @@ Source: ./billing-playbook/index.md
 
 ## Read
 
-Resolve a node by reading `name.md`; if absent, read `name/index.md`.
+References must use explicit relative paths.
 
 Read lazily:
 
 - use inline text directly
 - follow `Source: ./file.md` only when needed
-- follow `Source: ./folder/index.md` as the entrypoint for that folder-backed source
+- follow `Source: ./folder/index.md` when the source is folder-backed
 - do not scan unrelated sibling files unless validation requires it
 
 ## Split
