@@ -20,9 +20,10 @@ pnpm dlx skills add souljorje/agent-skills
 
 | Name | Score* | Description |
 | --- | --- | --- |
+| markdown-progressive-disclosure | n/a | Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading. |
 | socratic-mode | 9.5 | Socratic dialogue for clarifying a user's own thinking through neutral, one-question-at-a-time exploration. Best for reflective clarification, not for structuring planning briefs or technical solution planning. |
 
-\* [autoresearch](https://autoresearch.lol/) average score
+\* [autoresearch](https://autoresearch.lol) average score
 
 ## Evals
 
