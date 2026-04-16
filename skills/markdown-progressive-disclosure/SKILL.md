@@ -1,7 +1,7 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.7","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.8","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
@@ -169,7 +169,11 @@ Before finishing, check:
 - one entrypoint only: `name.md` or `name/index.md`, not both
 - every `Source:` target exists
 - every `Source:` path resolves relative to the file containing it
+- the `Source:` graph has no cycles
 - every public child in the unit is reachable from the entrypoint
+- each child in a unit has one parent by default; do not share one child across multiple parents unless the user explicitly wants shared docs
+- in a folder-backed topic, every public descendant belongs to that folder-backed subtree and is reachable from its `index.md`
+- traversal order is stable: read children in the same order their `Source:` lines appear in the parent
 - no parent has both substantial inline content and `Source:` for the same topic
 - no extracted child has a vague name
 - folder-backed sources have `index.md`
@@ -181,10 +185,11 @@ Fix in this order:
 
 1. duplicate or missing entrypoints
 2. broken `Source:` paths
-3. hidden public files
-4. mixed inline/external truth
-5. vague names
-6. over-splitting or needless depth
+3. cycles or shared-child mistakes
+4. hidden public files or orphaned folder descendants
+5. mixed inline/external truth
+6. vague names
+7. over-splitting or needless depth
 
 ## Output
 
