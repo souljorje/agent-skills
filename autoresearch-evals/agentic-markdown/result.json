@@ -1,0 +1,74 @@
+{
+  "skill": "agentic-markdown",
+  "skill_path": "skills/agentic-markdown/SKILL.md",
+  "skill_version_tested": "1.1.0",
+  "updated_at": "2026-04-17",
+  "iterations": 2,
+  "baseline_before": 9.7,
+  "latest_average": 9.9,
+  "best_average": 9.9,
+  "stop_criteria": {
+    "instruction_clarity": true,
+    "script_tool_success": true,
+    "output_completeness": true,
+    "mode_coverage": true,
+    "blocking_issues": true,
+    "brief_leakage": true
+  },
+  "briefs": {
+    "already-split-structure": {
+      "latest_score": 10.0,
+      "best_score": 10.0,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "No-op validation path is clear. The skill preserves mixed flat and folder-backed children without symmetry churn."
+    },
+    "invalid-split-structure": {
+      "latest_score": 9.8,
+      "best_score": 9.8,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Repair order stays explicit: duplicate entrypoint, broken paths, graph mistakes, hidden children, mixed truth, vague names, then depth."
+    },
+    "contradictory-instructions": {
+      "latest_score": 9.9,
+      "best_score": 9.9,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Contradiction preflight is explicit. User-mentioned nearby constraint files are read before refactoring, and unresolved conflicts stop the refactor."
+    },
+    "large-file": {
+      "latest_score": 9.9,
+      "best_score": 9.9,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Create-mode large-file path remains clear. The skill still distinguishes flat extraction from folder-backed topics and preserves heading identity for slash headings."
+    },
+    "existing-child-targeted-update": {
+      "latest_score": 9.8,
+      "best_score": 9.8,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Targeted update behavior stays explicit: reuse the good existing child, rename the vague path only if needed, and avoid duplicate topic files."
+    }
+  },
+  "changelog": {
+    "iteration_1": [
+      "Added contradiction preflight ahead of structural edits.",
+      "Added persisted eval scenarios for no-op, repair, and contradiction-stop behavior."
+    ],
+    "iteration_2": [
+      "Clarified that a user-mentioned nearby instruction file or local constraint must be read before refactoring.",
+      "Closed the remaining ambiguity in the contradiction-stop scenario."
+    ],
+    "coverage_extension": [
+      "Ran the persisted large-file create-mode brief against agentic-markdown and recorded a pass.",
+      "Ran the persisted existing-child-targeted-update brief against agentic-markdown and recorded a pass."
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # Test Brief: Update Near-Valid Unit Without Duplicating Children
 
-> Simulated input for testing the markdown-progressive-disclosure skill.
+> Simulated input for testing the agentic-markdown skill.
 > The executor agent treats this as what a real user would provide.
 
 ## Scenario
