@@ -1,21 +1,20 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.12","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.13","last_updated":"2026-04-17"}
 ---
 
 # Markdown Progressive Disclosure
 
 Use this skill to make Markdown docs easier for AI agents to read incrementally. Prefer exact paths, stable headings, and local context over prose that requires cross-file guessing.
 
-## Model And Structure
+## Model
 
 Treat the docs as an explicit file graph.
 
 - unit: one logical documentation node with one canonical starting file
 - entrypoint: exactly one of `name.md` or `name/index.md`
 - child: a file or folder-backed subtopic reached by one explicit `Source:` line from a parent file
-- leaf: a child with no further `Source:` lines
 - inline section: content stays under its heading in the current file
 - extracted section: content moves to a child and the parent keeps the heading plus `Source:`
 - public child: a file or folder that belongs to the same unit, not merely a nearby sibling
@@ -60,14 +59,8 @@ Treat heading text and file paths as separate concerns.
 
 Read inline text directly.
 
-Follow only explicit relative `Source:` paths from parent to child:
-
-- `Source: ./file.md`
-- `Source: ./folder/index.md`
-
-Paths resolve relative to the file that contains the `Source:` line. Example: in `docs/getting-started.md`, `Source: ./local-setup.md` means the child `docs/local-setup.md`, not repo root.
-
-Read lazily. Do not scan unrelated siblings unless validation requires it. Stay on the explicit unit graph.
+- follow only explicit relative `Source:` paths such as `./file.md` or `./folder/index.md`
+- resolve each path relative to the file that contains it, then read lazily and stay on the explicit unit graph unless validation requires adjacent-file checks
 
 ## Procedure
 
@@ -75,19 +68,9 @@ Use this transform order. Do not skip ahead.
 
 1. identify the unit boundary, canonical entrypoint, and any existing public children
 2. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
-3. choose child paths; reuse a good existing public child when it already matches the topic
-4. rewrite the parent in place, preserving heading order and heading identity, then write each child in the same logical order
-5. validate the unit and fix issues in the validation order below
-
-Constraints during the procedure:
-
-- do not change the unit entrypoint unless the user asks
-- do not reorder headings just to match filenames
-- do not create duplicate children for content that already has a good public child
-- do not absorb scratch notes or unrelated repo docs into the unit graph
-- do not label ambiguous adjacent files as public children without evidence from the unit or the user
-- do not rename extracted headings for filesystem convenience
-- stop after the unit is explicit and scannable; do not continue decomposing for symmetry
+3. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public
+4. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs
+5. validate the unit and fix issues in the validation order below; stop once the unit is explicit and scannable, not symmetric
 
 ## Split
 
@@ -158,7 +141,7 @@ Source: ./overview.md
 Source: ./exceptions.md
 ```
 
-### Naming examples
+### Filename patterns
 
 - `# Purpose` -> `purpose.md`
 - `# FAQ / Edge Cases` -> `faq-edge-cases.md`
@@ -179,8 +162,6 @@ Before finishing, check:
 - no extracted child has a vague name
 - folder-backed sources have `index.md`
 - nesting is no deeper than needed
-
-These are manual checks. No built-in validator is required.
 
 Fix in this order: 
 - entrypoints
