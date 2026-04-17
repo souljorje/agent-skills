@@ -1,0 +1,52 @@
+{
+  "skill": "markdown-progressive-disclosure",
+  "skill_path": "skills/markdown-progressive-disclosure/SKILL.md",
+  "skill_version_tested": "1.0.15",
+  "updated_at": "2026-04-17",
+  "iterations": 2,
+  "baseline_before": 9.7,
+  "latest_average": 9.8,
+  "best_average": 9.8,
+  "stop_criteria": {
+    "instruction_clarity": true,
+    "script_tool_success": true,
+    "output_completeness": true,
+    "mode_coverage": true,
+    "blocking_issues": true,
+    "brief_leakage": true
+  },
+  "briefs": {
+    "large-file": {
+      "latest_score": 9.8,
+      "best_score": 9.8,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Clear create-mode execution. Folder-backed Access Recovery remained a minor judgment call but stayed explicit and shallow."
+    },
+    "already-split-structure": {
+      "latest_score": 10.0,
+      "best_score": 10.0,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "No-op branch now reads clearly. Unit stayed unchanged and validation passed cleanly."
+    },
+    "invalid-split-structure": {
+      "latest_score": 9.8,
+      "best_score": 9.8,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Repair flow is now stable after fixing setup-invalid-split-structure.sh and clarifying broken placeholder handling."
+    },
+    "existing-child-targeted-update": {
+      "latest_score": 9.7,
+      "best_score": 9.7,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Targeted update now resolves cleanly after aligning the brief with the intended vague-name rename behavior."
+    }
+  }
+}
