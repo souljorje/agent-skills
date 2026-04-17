@@ -1,7 +1,7 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.13","last_updated":"2026-04-17"}
+metadata: {"version":"1.0.2","last_updated":"2026-04-17"}
 ---
 
 # Markdown Progressive Disclosure
@@ -37,13 +37,32 @@ Entrypoints may mix inline sections and extracted sections:
 Short inline text.
 
 # Workflow
+One short sentence describing what this child contains.
+
 Source: ./workflow.md
 
 # Policies
+One short sentence describing what this child contains.
+
 Source: ./policies/index.md
 ```
 
 `Source:` is the only reference directive.
+
+Default extracted-section format:
+
+- heading
+- one short factual description when it adds clarity; omit it when the heading plus `Source:` is already explicit
+- `Source:`
+
+Use a table only for dense index sections with many peer children and short descriptions. In that case, prefer:
+
+```md
+| Name | Description | Source |
+|---|---|---|
+| Workflow | Daily operating flow | `./workflow.md` |
+| Policies | Rules and exceptions | `./policies/index.md` |
+```
 
 ## Heading Identity
 
@@ -52,7 +71,7 @@ Treat heading text and file paths as separate concerns.
 - keep the original heading text in the parent when replacing content with `Source:`
 - sanitize filenames, not headings; `# FAQ / Edge Cases` may map to `faq-edge-cases.md`
 - preserve heading order and subheading order inside moved content
-- repeat a top heading in the child only if standalone readability needs it, and then use the exact same topic label
+- default a standalone child file to `# Topic`; if you repeat a top heading in the child, use the exact same topic label
 - in folder-backed topics, `index.md` should use the real topic heading, not a placeholder
 
 ## Read
@@ -68,8 +87,8 @@ Use this transform order. Do not skip ahead.
 
 1. identify the unit boundary, canonical entrypoint, and any existing public children
 2. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
-3. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public
-4. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs
+3. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public. In targeted updates, preserve an existing public child unless it fails validation or no longer matches the topic.
+4. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs. If the unit already satisfies the model and validation checks, make zero edits and report none.
 5. validate the unit and fix issues in the validation order below; stop once the unit is explicit and scannable, not symmetric
 
 ## Split
@@ -81,7 +100,7 @@ Rules:
 - keep one file by default; split when the result is clearly easier to scan, especially once a section grows large
 - prefer one extracted child per coherent topic or workflow
 - use flat `Source: ./name.md` for one coherent extracted topic; this is usually best for long linear sections such as steps, logs, examples, and FAQs
-- use `Source: ./name/index.md` only when the topic needs two or more descriptive child files
+- use `Source: ./name/index.md` only when the topic needs two or more descriptive child files or already contains multiple descriptive subtopics that would stay explicit as children
 - do not create a folder that contains only `index.md` unless the user explicitly wants folder layout
 - do not split for symmetry; one large section is fine if keeping it whole is clearer
 - child filenames must be descriptive
@@ -89,6 +108,8 @@ Rules:
 - stop splitting when the entrypoint is scannable
 
 When you split, replace the moved content in the parent with the heading plus `Source:`. Do not keep the same substantial content both inline and extracted.
+
+For extracted sections, prefer heading + short description + `Source:` over title-only links. Use tables only when they improve scanability more than normal headings.
 
 ## Examples
 
@@ -160,6 +181,7 @@ Before finishing, check:
 - extracted topics preserve heading identity; filenames may change, topic labels should not
 - no parent has both substantial inline content and `Source:` for the same topic
 - no extracted child has a vague name
+- broken placeholder `Source:` stubs are removed or inlined; do not invent missing child files just to satisfy the link
 - folder-backed sources have `index.md`
 - nesting is no deeper than needed
 
