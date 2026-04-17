@@ -1,49 +1,35 @@
 ---
 name: markdown-progressive-disclosure
 description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.10","last_updated":"2026-04-16"}
+metadata: {"version":"1.0.12","last_updated":"2026-04-16"}
 ---
 
 # Markdown Progressive Disclosure
 
 Use this skill to make Markdown docs easier for AI agents to read incrementally. Prefer exact paths, stable headings, and local context over prose that requires cross-file guessing.
 
-## Model
+## Model And Structure
 
 Treat the docs as an explicit file graph.
 
-- unit: one logical documentation node that should be readable from one canonical starting file
-- entrypoint: the canonical starting file for a unit; exactly one of `name.md` or `name/index.md`
+- unit: one logical documentation node with one canonical starting file
+- entrypoint: exactly one of `name.md` or `name/index.md`
 - child: a file or folder-backed subtopic reached by one explicit `Source:` line from a parent file
 - leaf: a child with no further `Source:` lines
-- inline section: a heading whose content stays in the file where the heading appears
-- extracted section: a heading whose content is moved to a child and replaced by `Source:`
-- public child: a file or folder intended to be part of the same unit, not merely a nearby sibling
+- inline section: content stays under its heading in the current file
+- extracted section: content moves to a child and the parent keeps the heading plus `Source:`
+- public child: a file or folder that belongs to the same unit, not merely a nearby sibling
 
-Treat `public child` narrowly.
+Treat `public child` narrowly. Count it as public only if it is already referenced by `Source:`, the user explicitly says it belongs to the unit, or it is an obvious unit-owned companion that avoids a duplicate child.
 
-A file or folder counts as a public child only if at least one of these is true:
-
-- it is already reached by an explicit `Source:` path in the unit
-- the user explicitly says it belongs to the unit
-- it is an obvious unit-owned companion to the entrypoint topic and reusing it avoids creating a duplicate child
-
-Do not treat a file or folder as a public child just because it is adjacent. These do not count as public children by default:
+Do not treat these as public children by default:
 
 - scratch notes, drafts, TODOs, logs, temp files, or analyst notes
 - another unit's entrypoint
-- generic repo docs that live nearby but are not part of the same topic
+- generic nearby docs with no clear topic ownership
 - files whose relationship to the unit is unclear
 
-Use these terms consistently when reading, splitting, validating, and reporting.
-
-## Structure
-
-Each unit has one entrypoint file: `name.md` or `name/index.md`.
-
-Do not keep both `name.md` and `name/index.md` for the same unit.
-
-`index.md` is only a folder convention. There is no implicit directory lookup. References must always point to the exact file path.
+Use these terms consistently. Keep one entrypoint only: `name.md` or `name/index.md`, never both. `index.md` is only a folder convention; there is no implicit directory lookup.
 
 Entrypoints may mix inline sections and extracted sections:
 
@@ -54,8 +40,8 @@ Short inline text.
 # Workflow
 Source: ./workflow.md
 
-# Billing
-Source: ./billing/index.md
+# Policies
+Source: ./policies/index.md
 ```
 
 `Source:` is the only reference directive.
@@ -64,18 +50,11 @@ Source: ./billing/index.md
 
 Treat heading text and file paths as separate concerns.
 
-- preserve the original heading text in the parent when replacing content with `Source:`
+- keep the original heading text in the parent when replacing content with `Source:`
 - sanitize filenames, not headings; `# FAQ / Edge Cases` may map to `faq-edge-cases.md`
-- preserve heading order and relative subheading order inside the moved content
-- if a child starts with a repeated top heading for standalone readability, use the same heading text as the extracted parent topic
-- do not rename a topic in the child just to match the filename
-- for folder-backed topics, `index.md` should use the same topic heading as the parent, not a generic placeholder like `# Topic`
-
-Default pattern:
-
-- parent keeps the original heading plus `Source:`
-- flat child usually starts with the moved body and subheadings
-- repeat the top heading in the child only when standalone readability clearly benefits
+- preserve heading order and subheading order inside moved content
+- repeat a top heading in the child only if standalone readability needs it, and then use the exact same topic label
+- in folder-backed topics, `index.md` should use the real topic heading, not a placeholder
 
 ## Read
 
@@ -94,14 +73,11 @@ Read lazily. Do not scan unrelated siblings unless validation requires it. Stay 
 
 Use this transform order. Do not skip ahead.
 
-1. identify the unit boundary and canonical entrypoint
-2. inventory the entrypoint headings in order
-3. inventory existing public children already adjacent to the entrypoint; classify adjacency explicitly, do not assume every sibling belongs to the unit
-4. classify each heading as inline section, extracted section, or folder-backed topic using the split rules below
-5. choose the child path for each extracted section; reuse a good existing public child when it already matches the topic
-6. rewrite the parent in place, preserving heading order and exact heading identity, replacing moved content with the same heading plus `Source:`
-7. write each child file with the moved content in the same logical order and preserve heading identity rules
-8. validate the resulting unit and fix issues in the validation order below
+1. identify the unit boundary, canonical entrypoint, and any existing public children
+2. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
+3. choose child paths; reuse a good existing public child when it already matches the topic
+4. rewrite the parent in place, preserving heading order and heading identity, then write each child in the same logical order
+5. validate the unit and fix issues in the validation order below
 
 Constraints during the procedure:
 
@@ -119,14 +95,12 @@ Split only when it improves readability and preserves meaning, order, and parent
 
 Rules:
 
-- `<=200` lines: keep as one file unless the user asks for decomposition
-- `>200` lines: split only where the result is clearer
-- do not split for symmetry; one large section is fine if keeping it whole is clearer
+- keep one file by default; split when the result is clearly easier to scan, especially once a section grows large
 - prefer one extracted child per coherent topic or workflow
-- use flat `Source: ./name.md` for one coherent extracted topic, even if it is large
-- use flat files for long linear sections such as numbered steps, logs, examples, and FAQs unless they contain clear internal subtopics
+- use flat `Source: ./name.md` for one coherent extracted topic; this is usually best for long linear sections such as steps, logs, examples, and FAQs
 - use `Source: ./name/index.md` only when the topic needs two or more descriptive child files
 - do not create a folder that contains only `index.md` unless the user explicitly wants folder layout
+- do not split for symmetry; one large section is fine if keeping it whole is clearer
 - child filenames must be descriptive
 - never create vague chunks like `part-1.md`
 - stop splitting when the entrypoint is scannable
@@ -147,9 +121,6 @@ workflow.md
 ```md
 # Purpose
 Short inline text.
-
-## Quick reference
-Some text.
 
 ## Setup
 Source: ./setup.md
@@ -174,14 +145,8 @@ setup/
 # Purpose
 Short inline text
 
-## Quick reference
-Some text
-
 ## Setup
 Source: ./setup/index.md
-
-## Workflow
-Source: ./workflow.md
 ```
 
 `setup/index.md`:
@@ -193,7 +158,7 @@ Source: ./overview.md
 Source: ./exceptions.md
 ```
 
-### Naming defaults:
+### Naming examples
 
 - `# Purpose` -> `purpose.md`
 - `# FAQ / Edge Cases` -> `faq-edge-cases.md`
@@ -204,13 +169,11 @@ Source: ./exceptions.md
 Before finishing, check:
 
 - one entrypoint only: `name.md` or `name/index.md`, not both
-- every `Source:` target exists
-- every `Source:` path resolves relative to the file containing it
-- the `Source:` graph has no cycles
-- every public child in the unit is reachable from the entrypoint, and only explicit unit-owned companions should be treated as public children
-- each child in a unit has one parent by default; do not share one child across multiple parents unless the user explicitly wants shared docs
-- in a folder-backed topic, every public descendant belongs to that folder-backed subtree and is reachable from its `index.md`
-- traversal order is stable: read children in the same order their `Source:` lines appear in the parent
+- every `Source:` target exists and resolves relative to the file that contains it
+- the `Source:` graph is acyclic and traversal order follows the `Source:` line order
+- every public child is reachable from the entrypoint; do not treat non-unit companions as public children
+- each child has one parent by default unless the user explicitly wants shared docs
+- in a folder-backed topic, every public descendant belongs to that subtree and is reachable from its `index.md`
 - extracted topics preserve heading identity; filenames may change, topic labels should not
 - no parent has both substantial inline content and `Source:` for the same topic
 - no extracted child has a vague name
@@ -219,15 +182,14 @@ Before finishing, check:
 
 These are manual checks. No built-in validator is required.
 
-Fix in this order:
-
-1. duplicate or missing entrypoints
-2. broken `Source:` paths
-3. cycles or shared-child mistakes
-4. hidden public files or orphaned folder descendants
-5. mixed inline/external truth
-6. vague names
-7. over-splitting or needless depth
+Fix in this order: 
+- entrypoints
+- broken paths
+- graph mistakes
+- hidden/orphaned public files
+- mixed truth
+- vague names
+- needless depth
 
 ## Output
 
