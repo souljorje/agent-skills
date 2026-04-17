@@ -1,7 +1,7 @@
 ---
 name: agentic-markdown
 description: Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents.
-metadata: {"version":"1.0.3","last_updated":"2026-04-17"}
+metadata: {"version":"1.1.0","last_updated":"2026-04-17"}
 ---
 
 # Agentic Markdown
@@ -81,15 +81,26 @@ Read inline text directly.
 - follow only explicit relative `Source:` paths such as `./file.md` or `./folder/index.md`
 - resolve each path relative to the file that contains it, then read lazily and stay on the explicit unit graph unless validation requires adjacent-file checks
 
+## Contradictions
+
+Check for contradictions before structural edits.
+
+- look for instructions that cannot both be true at once, such as conflicting split requests, incompatible path requirements, or one instruction that says to preserve a child while another says to replace it
+- if the user points to a nearby instruction file or local constraint that governs the unit, read it before refactoring
+- prefer the most specific in-scope instruction when there is an obvious precedence relationship
+- if the conflict is real and unresolved, surface it to the user before refactoring the unit
+- do not paper over contradictions by producing a hybrid structure that violates the file graph model
+
 ## Procedure
 
 Use this transform order. Do not skip ahead.
 
-1. identify the unit boundary, canonical entrypoint, and any existing public children
-2. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
-3. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public. In targeted updates, preserve an existing public child unless it fails validation or no longer matches the topic.
-4. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs. If the unit already satisfies the model and validation checks, make zero edits and report none.
-5. validate the unit and fix issues in the validation order below; stop once the unit is explicit and scannable, not symmetric
+1. check for contradictions in the user request, current file graph, and nearby explicit instructions. If a real unresolved conflict remains, stop and ask the user to resolve it before refactoring.
+2. identify the unit boundary, canonical entrypoint, and any existing public children
+3. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
+4. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public. In targeted updates, preserve an existing public child unless it fails validation or no longer matches the topic.
+5. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs. If the unit already satisfies the model and validation checks, make zero edits and report none.
+6. validate the unit and fix issues in the validation order below; stop once the unit is explicit and scannable, not symmetric
 
 ## Split
 
