@@ -1,12 +1,12 @@
 ---
-name: markdown-progressive-disclosure
-description: Restructure Markdown context with progressive disclosure: one entrypoint, explicit sources, lazy reading.
-metadata: {"version":"1.0.2","last_updated":"2026-04-17"}
+name: agentic-markdown
+description: Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents.
+metadata: {"version":"1.0.3","last_updated":"2026-04-17"}
 ---
 
-# Markdown Progressive Disclosure
+# Agentic Markdown
 
-Use this skill to make Markdown docs easier for AI agents to read incrementally. Prefer exact paths, stable headings, and local context over prose that requires cross-file guessing.
+Use this skill to make Markdown files easier for AI agents to read incrementally and act on without guessing. Use progressive disclosure: keep entrypoints short, push detail into explicit children, and read lazily through exact paths instead of broad scanning.
 
 ## Model
 
