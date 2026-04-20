@@ -1,7 +1,10 @@
 ---
 name: skill-autoresearch
 description: Improve a skill through iterative executor runs, quantitative scoring, targeted fixes, and reruns until stop criteria are met. Inspired by Karpathy's autoresearch.
-metadata: {"version":"1.0.0","last_updated":"2026-04-17","forked_from": "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"}
+metadata:
+  version: "1.1.0"
+  last_updated: "2026-04-20"
+  forked_from: "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"
 ---
 
 # Skill: Skill Autoresearch
@@ -68,6 +71,8 @@ metadata: {"version":"1.0.0","last_updated":"2026-04-17","forked_from": "https:/
 
 The key insight: instead of writing test scripts, you launch an agent that follows the skill procedure as a real user would. The agent's confusion IS the test signal. If it gets confused, the skill's instructions are unclear. If the output is wrong, the procedure has a gap.
 
+This is mandatory, not optional. Do not replace the executor-agent run with a local checklist, fixture smoke test, or manual paraphrase of what the executor would have done.
+
 ### Confusion Score Is the Primary Metric
 
 Each step in the target skill gets a clarity rating (1-10). The average across all steps is the primary optimization target. This is the equivalent of Karpathy's `val_bpb` — a single quantitative number that improves monotonically as the skill gets clearer.
@@ -75,6 +80,8 @@ Each step in the target skill gets a clarity rating (1-10). The average across a
 ### Worktree Isolation Keeps Experiments Clean
 
 Each executor runs in a git worktree, so it can create files, run scripts, and make changes without affecting the working directory. Failed experiments are discarded automatically. This is analogous to Karpathy's branch-per-experiment pattern.
+
+This is mandatory for every executor run. Do not run the executor in the main worktree.
 
 ### 3-5 Iterations Is Typical
 
@@ -202,9 +209,17 @@ For each iteration:
 
 #### 5a. Launch the executor agent
 
+This step is mandatory for every brief you count as tested.
+
 Use the Agent tool with:
 - `isolation: "worktree"` — so changes don't affect the main workspace
 - `mode: "auto"` — so the executor can create files and run scripts
+
+Requirements:
+- launch a separate executor subagent per brief or per mode under test; do not collapse multiple briefs into one executor report
+- each executor must perform end-to-end execution of the target skill as written, not only fixture setup or syntax checks
+- each executor must return a confusion log covering every step in the target skill's procedure
+- do not mark a brief as tested if the executor skipped the confusion log or did not complete the full procedure
 
 Before launching:
 - If persisted fixtures or scripts exist, copy them into the worktree or run them there.
@@ -327,6 +342,11 @@ Iteration 1 (clarity X.X):
 Iteration 2 (clarity X.X):
 - [finding] → [fix applied]
 ```
+
+When reporting a persisted run, also include enough executor evidence to audit the claim:
+- which executor subagent handled each brief
+- whether it ran in an isolated worktree
+- whether it produced a per-step confusion log
 
 **Version bumps:**
 - SKILL.md: v[old] → v[new]

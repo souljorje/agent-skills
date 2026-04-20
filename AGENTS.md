@@ -12,11 +12,12 @@ Personal repo for authored agent skills and their eval briefs.
 
 - Do not advertise content from `.agents/` as if it were a local published skill
 - Do not edit autoresearch-evals/ manually outside of `skill-autoresearch` context
-- When the user asks to run tests or evals, use `skill-autoresearch`
+- When the user asks to run tests or evals, always use `skill-autoresearch`
+- `skill-autoresearch` runs must use separate executor subagents in isolated worktrees, with end-to-end execution and a confusion log for every step
 
 ## Development
 
 - On skill changes, run skill-autoresearch with at least 3 briefs, update the Skills table in [README.md](./README.md), do not regress the average below the current baseline
 - Split work into multiple commits when changes cover distinct points or independently reviewable units
 - Every skill needs metadata; update last_updated and version before commit when needed
-- Use conventional commits: feat skills, tests evals, docs repo docs, chore structure
+- Use conventional commits: feat skills, tests evals, docs repo docs, chore structure; prefer to split related changes into multiple commits

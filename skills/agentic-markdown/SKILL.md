@@ -1,7 +1,9 @@
 ---
 name: agentic-markdown
 description: "Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents."
-metadata: {"version":"1.1.0","last_updated":"2026-04-17"}
+metadata:
+  version: "1.2.1"
+  last_updated: "2026-04-20"
 ---
 
 # Agentic Markdown
@@ -21,6 +23,8 @@ Treat the docs as an explicit file graph.
 
 Treat `public child` narrowly. Count it as public only if it is already referenced by `Source:`, the user explicitly says it belongs to the unit, or it is an obvious unit-owned companion that avoids a duplicate child.
 
+During validation, you may discover a hidden public child by adjacent-file checks. Treat it as public only if its topic clearly belongs to a heading in the unit, it does not compete with another parent's topic, and the user or local instructions do not exclude it.
+
 Do not treat these as public children by default:
 
 - scratch notes, drafts, TODOs, logs, temp files, or analyst notes
@@ -39,15 +43,27 @@ Short inline text.
 # Workflow
 One short sentence describing what this child contains.
 
-Source: ./workflow.md
+Source: [Workflow](./workflow.md)
 
 # Policies
 One short sentence describing what this child contains.
 
-Source: ./policies/index.md
+Source: [Policies](./policies/index.md)
 ```
 
 `Source:` is the only reference directive.
+
+Canonical `Source:` form is a markdown link with a human-readable label:
+
+```md
+Source: [Workflow](./workflow.md)
+```
+
+Raw paths remain valid when brevity matters:
+
+```md
+Source: ./workflow.md
+```
 
 Default extracted-section format:
 
@@ -60,8 +76,8 @@ Use a table only for dense index sections with many peer children and short desc
 ```md
 | Name | Description | Source |
 |---|---|---|
-| Workflow | Daily operating flow | `./workflow.md` |
-| Policies | Rules and exceptions | `./policies/index.md` |
+| Workflow | Daily operating flow | [Workflow](./workflow.md) |
+| Policies | Rules and exceptions | [Policies](./policies/index.md) |
 ```
 
 ## Heading Identity
@@ -73,13 +89,16 @@ Treat heading text and file paths as separate concerns.
 - preserve heading order and subheading order inside moved content
 - default a standalone child file to `# Topic`; if you repeat a top heading in the child, use the exact same topic label
 - in folder-backed topics, `index.md` should use the real topic heading, not a placeholder
+- in folder-backed topics, keep every extracted subtopic heading in the index, including the first subtopic after the top-level topic heading
 
 ## Read
 
 Read inline text directly.
 
-- follow only explicit relative `Source:` paths such as `./file.md` or `./folder/index.md`
-- resolve each path relative to the file that contains it, then read lazily and stay on the explicit unit graph unless validation requires adjacent-file checks
+- follow only explicit relative `Source:` targets, either as raw paths such as `./file.md` or as markdown links such as `[Workflow](./workflow.md)`
+- when a `Source:` line uses a markdown link, treat the link target as the path and the link label as human-facing text only
+- resolve each `Source:` target relative to the file that contains it, then read lazily and stay on the explicit unit graph unless validation requires adjacent-file checks
+- treat `nearby explicit instructions` narrowly: the user request, files the user explicitly points to, files already on the unit graph, and any local constraint file explicitly named by the user or brief
 
 ## Contradictions
 
@@ -110,13 +129,17 @@ Rules:
 
 - keep one file by default; split when the result is clearly easier to scan, especially once a section grows large
 - prefer one extracted child per coherent topic or workflow
-- use flat `Source: ./name.md` for one coherent extracted topic; this is usually best for long linear sections such as steps, logs, examples, and FAQs
-- use `Source: ./name/index.md` only when the topic needs two or more descriptive child files or already contains multiple descriptive subtopics that would stay explicit as children
+- prefer `Source: [Human Readable Name](./name.md)` for one coherent extracted topic; this is usually best for long linear sections such as steps, logs, examples, and FAQs
+- use `Source: [Human Readable Name](./name/index.md)` only when the topic needs two or more descriptive child files or already contains multiple descriptive subtopics that would stay explicit as children
+- raw-path `Source:` lines remain valid, but prefer labeled markdown links when writing or rewriting parent files for humans
 - do not create a folder that contains only `index.md` unless the user explicitly wants folder layout
 - do not split for symmetry; one large section is fine if keeping it whole is clearer
 - child filenames must be descriptive
+- when renaming a vague extracted child, derive the new filename from the child heading or topic label, not from incidental brief phrasing
 - never create vague chunks like `part-1.md`
 - stop splitting when the entrypoint is scannable
+
+Treat `scannable` concretely: a human should be able to identify the entrypoint structure in one quick pass through headings, short descriptions, and `Source:` lines without opening every child immediately.
 
 When you split, replace the moved content in the parent with the heading plus `Source:`. Do not keep the same substantial content both inline and extracted.
 
@@ -138,10 +161,10 @@ workflow.md
 Short inline text.
 
 ## Setup
-Source: ./setup.md
+Source: [Setup](./setup.md)
 
 ## Workflow
-Source: ./workflow.md
+Source: [Workflow](./workflow.md)
 ```
 
 ### Folder-backed split
@@ -161,16 +184,16 @@ setup/
 Short inline text
 
 ## Setup
-Source: ./setup/index.md
+Source: [Setup](./setup/index.md)
 ```
 
 `setup/index.md`:
 ```md
 # Setup
-Source: ./overview.md
+Source: [Overview](./overview.md)
 
 ## Exceptions
-Source: ./exceptions.md
+Source: [Exceptions](./exceptions.md)
 ```
 
 ### Filename patterns
@@ -185,6 +208,7 @@ Before finishing, check:
 
 - one entrypoint only: `name.md` or `name/index.md`, not both
 - every `Source:` target exists and resolves relative to the file that contains it
+- in markdown-link `Source:` lines, the label and target do not contradict the surrounding topic
 - the `Source:` graph is acyclic and traversal order follows the `Source:` line order
 - every public child is reachable from the entrypoint; do not treat non-unit companions as public children
 - each child has one parent by default unless the user explicitly wants shared docs
