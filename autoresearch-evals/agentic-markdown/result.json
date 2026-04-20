@@ -1,11 +1,11 @@
 {
   "skill": "agentic-markdown",
   "skill_path": "skills/agentic-markdown/SKILL.md",
-  "skill_version_tested": "1.1.0",
-  "updated_at": "2026-04-17",
-  "iterations": 2,
+  "skill_version_tested": "1.2.1",
+  "updated_at": "2026-04-20",
+  "iterations": 4,
   "baseline_before": 9.7,
-  "latest_average": 9.9,
+  "latest_average": 8.5,
   "best_average": 9.9,
   "stop_criteria": {
     "instruction_clarity": true,
@@ -15,46 +15,75 @@
     "blocking_issues": true,
     "brief_leakage": true
   },
+  "baseline_regressed": true,
+  "baseline_regression_note": "Real executor-subagent runs in isolated forked workspaces scored below the earlier fixture-only baseline. Keep README and result aligned to the real run, not the weaker prior method.",
   "briefs": {
     "already-split-structure": {
-      "latest_score": 10.0,
+      "latest_score": 9.0,
       "best_score": 10.0,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "No-op validation path is clear. The skill preserves mixed flat and folder-backed children without symmetry churn."
+      "notes": "Executor subagent rerun passed in an isolated forked workspace. Zero-edit path is clearer after the public-child and scannable clarifications, but some qualitative thresholds remain."
     },
     "invalid-split-structure": {
-      "latest_score": 9.8,
+      "latest_score": 8.2,
       "best_score": 9.8,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "Repair order stays explicit: duplicate entrypoint, broken paths, graph mistakes, hidden children, mixed truth, vague names, then depth."
+      "notes": "Executor subagent rerun passed in an isolated forked workspace. Validation order is good, but duplicate-entrypoint and hidden-public-child handling still require meaningful judgment."
     },
     "contradictory-instructions": {
-      "latest_score": 9.9,
+      "latest_score": 8.8,
       "best_score": 9.9,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "Contradiction preflight is explicit. User-mentioned nearby constraint files are read before refactoring, and unresolved conflicts stop the refactor."
+      "notes": "Executor subagent rerun passed in an isolated forked workspace. New contradiction guidance clearly forced the correct early-stop outcome."
     },
     "large-file": {
-      "latest_score": 9.9,
+      "latest_score": 8.5,
       "best_score": 9.9,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "Create-mode large-file path remains clear. The skill still distinguishes flat extraction from folder-backed topics and preserves heading identity for slash headings."
+      "notes": "Executor subagent rerun passed in an isolated forked workspace. Folder-backed topic choice is better bounded, but some rewrite/detail thresholds remain qualitative."
     },
     "existing-child-targeted-update": {
-      "latest_score": 9.8,
+      "latest_score": 8.0,
       "best_score": 9.8,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "Targeted update behavior stays explicit: reuse the good existing child, rename the vague path only if needed, and avoid duplicate topic files."
+      "notes": "Executor subagent rerun passed in an isolated forked workspace. Targeted update behavior is workable, but rename/reuse choices still require more judgment than the baseline allowed."
+    }
+  },
+  "executor_evidence": {
+    "already-split-structure": {
+      "agent": "Herschel",
+      "isolation_mode": "forked_workspace",
+      "confusion_log_per_step": true
+    },
+    "invalid-split-structure": {
+      "agent": "Nietzsche",
+      "isolation_mode": "forked_workspace",
+      "confusion_log_per_step": true
+    },
+    "contradictory-instructions": {
+      "agent": "Ohm",
+      "isolation_mode": "forked_workspace",
+      "confusion_log_per_step": true
+    },
+    "large-file": {
+      "agent": "Copernicus",
+      "isolation_mode": "forked_workspace",
+      "confusion_log_per_step": true
+    },
+    "existing-child-targeted-update": {
+      "agent": "Jason",
+      "isolation_mode": "forked_workspace",
+      "confusion_log_per_step": true
     }
   },
   "changelog": {
@@ -69,6 +98,18 @@
     "coverage_extension": [
       "Ran the persisted large-file create-mode brief against agentic-markdown and recorded a pass.",
       "Ran the persisted existing-child-targeted-update brief against agentic-markdown and recorded a pass."
+    ],
+    "iteration_3": [
+      "Made labeled markdown links under Source canonical while keeping raw-path Source lines valid.",
+      "Updated persisted eval briefs and fixture scripts to exercise labeled Source links across the full test set."
+    ],
+    "iteration_4": [
+      "Changed the repo rule and skill-autoresearch instructions so tests/evals must use separate executor subagents with isolated workspaces and per-step confusion logs.",
+      "Ran real executor-subagent tests for all five persisted briefs and recorded the lower but more credible average."
+    ],
+    "iteration_4_retries": [
+      "The first rerun batch hit subagent transport disconnects; retried the missing briefs in smaller batches.",
+      "Sandbox blocked true git worktree usage, so executor isolation used forked workspaces instead of literal git worktrees."
     ]
   }
 }

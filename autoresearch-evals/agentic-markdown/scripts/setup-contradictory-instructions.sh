@@ -12,7 +12,7 @@ It is short enough to scan in place.
 Operators read this section in one pass at kickoff.
 
 # Workflow
-Source: ./workflow.md
+Source: [Workflow](./workflow.md)
 EOF
 
 cat > workflow.md <<'EOF'

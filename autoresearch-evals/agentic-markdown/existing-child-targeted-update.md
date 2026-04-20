@@ -25,7 +25,7 @@ Update an otherwise-valid unit after the user requests one targeted structural c
 ## Expected Output
 
 - `team-handbook.md` remains the canonical entrypoint.
-- `# Escalation Policies` is extracted to a descriptive child such as `Source: ./escalation-policies.md`.
+- `# Escalation Policies` is extracted to a descriptive child such as `Source: [Escalation Policies](./escalation-policies.md)`.
 - The existing weekly-operations child content is reused rather than duplicated.
 - The intentionally vague `ops.md` child is renamed to a descriptive path such as `weekly-operations.md`.
 - Heading order and heading identity are preserved.

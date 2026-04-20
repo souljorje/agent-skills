@@ -24,7 +24,7 @@ Restructure one large Markdown guide into an explicit progressive-disclosure uni
 ## Expected Output
 
 - `support-guide.md` remains the canonical entrypoint.
-- `# Refund Workflow` is extracted to a descriptive flat child such as `Source: ./refund-workflow.md`.
+- `# Refund Workflow` is extracted to a descriptive flat child such as `Source: [Refund Workflow](./refund-workflow.md)`.
 - `# Access Recovery` may remain one flat child or become a folder-backed topic, but only if the result is clearer and explicit.
 - `# FAQ / Edge Cases` keeps its heading text in the parent if extracted and uses a safe path such as `faq-edge-cases.md`.
 - `draft-notes.md` stays outside the unit graph.

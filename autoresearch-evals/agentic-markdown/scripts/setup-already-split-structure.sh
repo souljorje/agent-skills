@@ -11,12 +11,12 @@ It should remain easy to scan.
 # Setup
 Short starting steps for operators.
 
-Source: ./setup.md
+Source: [Setup](./setup.md)
 
 # Policies
 Rules and exceptions for daily operations.
 
-Source: ./policies/index.md
+Source: [Policies](./policies/index.md)
 
 # Quick Rules
 - Check scope before editing files.
@@ -42,7 +42,7 @@ Rules stay explicit and reachable.
 ## Exceptions
 Specific cases live in a separate child.
 
-Source: ./exceptions.md
+Source: [Exceptions](./exceptions.md)
 EOF
 
 cat > policies/exceptions.md <<'EOF'

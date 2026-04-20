@@ -25,7 +25,7 @@ Repair an already-split Markdown unit that violates multiple validation rules. T
 
 - `ops-guide.md` is the only remaining entrypoint for the unit.
 - `ops-guide/index.md` is removed or converted so it is no longer a duplicate entrypoint.
-- `Source: ./missing-topic.md` is repaired or removed.
+- `Source: [Missing Topic](./missing-topic.md)` is repaired or removed.
 - No cycle remains.
 - No child is shared across multiple parent headings unless explicitly required, which this brief does not require.
 - `refund-exceptions.md` is either reachable from the entrypoint or intentionally absorbed so it is no longer a hidden public file.

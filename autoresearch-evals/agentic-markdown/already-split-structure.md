@@ -24,7 +24,7 @@ Validate a unit that already follows the skill well. The correct behavior is to 
 ## Expected Output
 
 - `guide.md` remains the only unit entrypoint.
-- `setup.md` remains a flat child.
+- `setup.md` remains a flat child, referenced with labeled `Source:` syntax such as `Source: [Setup](./setup.md)`.
 - `policies/index.md` remains a folder-backed topic with reachable descendants.
 - No structural churn is introduced only for symmetry.
 - No cosmetic rename is performed if the current paths are already valid and descriptive.

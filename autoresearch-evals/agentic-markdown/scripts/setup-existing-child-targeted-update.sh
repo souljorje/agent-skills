@@ -11,7 +11,7 @@ Updates should be targeted, not disruptive.
 # Weekly Operations
 Short weekly operating summary.
 
-Source: ./ops.md
+Source: [Weekly Operations](./ops.md)
 
 # Escalation Policies
 EOF

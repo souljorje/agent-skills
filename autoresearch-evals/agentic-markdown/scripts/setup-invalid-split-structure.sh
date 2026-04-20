@@ -13,24 +13,24 @@ Validation should resolve graph issues first.
 # Billing
 Short billing overview.
 
-Source: ./billing.md
+Source: [Billing](./billing.md)
 
 # Incident Response
 EOF
 for i in $(seq 1 18); do printf 'Inline incident %03d\n' "$i" >> ops-guide.md; done
 cat >> ops-guide.md <<'EOF'
 
-Source: ./incident.md
+Source: [Incident Response](./incident.md)
 
 # FAQ
 Short answers for operators.
 
-Source: ./faq.md
+Source: [FAQ](./faq.md)
 
 # Missing Topic
 Placeholder reference for a topic that is absent.
 
-Source: ./missing-topic.md
+Source: [Missing Topic](./missing-topic.md)
 EOF
 
 for i in $(seq 1 20); do printf 'Alternate entrypoint line %02d\n' "$i"; done > ops-guide/index.md
@@ -39,7 +39,7 @@ cat > billing.md <<'EOF'
 # Billing
 EOF
 for i in $(seq 1 70); do printf 'Billing note %03d\n' "$i" >> billing.md; done
-printf 'Source: ./common.md\n' >> billing.md
+printf 'Source: [Shared Notes](./common.md)\n' >> billing.md
 
 cat > incident.md <<'EOF'
 # Incident Response
@@ -50,13 +50,13 @@ cat > faq.md <<'EOF'
 # FAQ
 EOF
 for i in $(seq 1 30); do printf 'FAQ line %03d\n' "$i" >> faq.md; done
-printf 'Source: ./common.md\n' >> faq.md
+printf 'Source: [Shared Notes](./common.md)\n' >> faq.md
 
 cat > common.md <<'EOF'
 # Shared Notes
 EOF
 for i in $(seq 1 18); do printf 'Common line %03d\n' "$i" >> common.md; done
-printf 'Source: ./billing.md\n' >> common.md
+printf 'Source: [Billing](./billing.md)\n' >> common.md
 
 cat > refund-exceptions.md <<'EOF'
 # Refund Exceptions
