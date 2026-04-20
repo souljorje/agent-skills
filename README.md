@@ -20,7 +20,7 @@ pnpm dlx skills add souljorje/agent-skills
 
 | Name | Score* | Description |
 | --- | --- | --- |
-| agentic-markdown | 9.9 | Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents. |
+| agentic-markdown | 8.5 | Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents. |
 | skill-autoresearch | - | Improve a skill through iterative runs, quantitative scoring, targeted fixes, and reruns until stop criteria are met. Inspired by Karpathy's autoresearch. |
 | socratic-mode | 9.5 | Socratic dialogue for clarifying a user's own thinking through neutral, one-question-at-a-time exploration. |
 
