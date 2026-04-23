@@ -2,8 +2,8 @@
 name: skill-autoresearch
 description: Use this skill when building or revising a skill and you need iterative executor runs, scored confusion logs, targeted fixes, and reruns against multiple briefs until stop criteria are met. Inspired by Karpathy's autoresearch.
 metadata:
-  version: "1.1.1"
-  last_updated: "2026-04-20"
+  version: "1.2.0"
+  last_updated: "2026-04-23"
   forked_from: "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"
 ---
 
@@ -141,8 +141,7 @@ A test brief is a simulated set of "source materials" that an executor agent use
 **Score tracking:**
 - Do not store last score inside the brief itself. The brief is input; scores are run output.
 - By default, keep scores in the run report only; do not write a persistent score file.
-- If persistence was requested, store scores separately in `result.json` next to the persisted brief and fixtures.
-- Record at minimum: brief name, latest score, best score, date, target skill version tested, notes.
+- If persistence was requested, store scores separately in `result.json` next to the persisted brief and fixtures, use this schema: [./result.schema.json](./result.schema.json).
 
 **Template:**
 
@@ -343,10 +342,11 @@ Iteration 2 (clarity X.X):
 - [finding] → [fix applied]
 ```
 
-When reporting a persisted run, also include enough executor evidence to audit the claim:
-- which executor subagent handled each brief
-- whether it ran in an isolated worktree
-- whether it produced a per-step confusion log
+If persistence was requested, write `result.json` in the persisted eval folder using the schema contract. Keep that file compact and table-shaped:
+- top-level `results` mirrors the final scoring table
+- `briefs` contains every persisted brief keyed by brief name
+- each brief has `status` plus per-brief `results` when the brief was actually scored
+- human final reporting can stay richer than `result.json`
 
 **Version bumps:**
 - SKILL.md: v[old] → v[new]
@@ -391,6 +391,6 @@ When reporting a persisted run, also include enough executor evidence to audit t
 - If the user explicitly asks to keep eval assets, save them in the folder the user requested.
 - If the user asks to keep eval assets but does not name a folder, use `autoresearch-evals/{skill-name}/` and keep `{brief-name}.md`, `fixtures/`, `scripts/`, and `result.json` inside it.
 - Scratch files, executor output, and temporary materialized fixture copies belong in the isolated worktree or `runtime/.tmp/`.
-- Keep regression history separate from briefs. If persistence was requested, write it to `result.json`.
+- Keep `result.json` as current-state summary only if persistence was requested; do not use it as a changelog or executor audit log.
 - Worktree branches from executor agents are auto-cleaned if no changes were made. If changes persist, the worktree path is returned in the result.
 - The skill produces no deliverable — its output is the improved target skill itself.

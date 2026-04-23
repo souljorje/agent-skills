@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/skills/skill-autoresearch/result.schema.json",
+  "title": "Skill Autoresearch Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "skill",
+    "skill_path",
+    "skill_version_tested",
+    "updated_at",
+    "latest_average",
+    "results",
+    "briefs"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "skill": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skill_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skill_version_tested": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "latest_average": {
+      "type": "number"
+    },
+    "results": {
+      "$ref": "#/$defs/requiredMetricResults"
+    },
+    "briefs": {
+      "type": "object",
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/brief"
+      }
+    }
+  },
+  "$defs": {
+    "metricResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "pass"
+      ],
+      "properties": {
+        "score": {
+          "type": "number"
+        },
+        "pass": {
+          "type": "boolean"
+        }
+      }
+    },
+    "requiredMetricResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "instruction_clarity",
+        "script_tool_success",
+        "output_completeness",
+        "mode_coverage",
+        "blocking_issues",
+        "brief_specific_leakage"
+      ],
+      "properties": {
+        "instruction_clarity": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "script_tool_success": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "output_completeness": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "mode_coverage": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "blocking_issues": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "brief_specific_leakage": {
+          "$ref": "#/$defs/metricResult"
+        }
+      }
+    },
+    "briefMetricResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "instruction_clarity": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "script_tool_success": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "output_completeness": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "mode_coverage": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "blocking_issues": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "brief_specific_leakage": {
+          "$ref": "#/$defs/metricResult"
+        }
+      }
+    },
+    "brief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "failed",
+            "error",
+            "pending"
+          ]
+        },
+        "results": {
+          "$ref": "#/$defs/briefMetricResults"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "pass",
+                  "failed"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "results"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "error"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "notes"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
