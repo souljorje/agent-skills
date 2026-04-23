@@ -3,15 +3,12 @@
   "skill_path": "skills/agentic-markdown/SKILL.md",
   "skill_version_tested": "2.0.0",
   "updated_at": "2026-04-23",
-  "iterations": 5,
-  "baseline_before": 8.5,
-  "latest_average": 10.0,
+  "iterations": 6,
+  "baseline_before": 10.0,
+  "latest_average": 9.5,
   "best_average": 10.0,
-  "latest_scope": "Three strict v2 persisted briefs updated and run with separate executor subagents in isolated scenarios.",
-  "unrun_persisted_briefs": [
-    "contradictory-instructions",
-    "existing-child-targeted-update"
-  ],
+  "latest_scope": "All five persisted briefs run with separate executor subagents in isolated disposable copies; contradictory-instructions is an intentional stop case and is not included in the completed-transform clarity average.",
+  "unrun_persisted_briefs": [],
   "stop_criteria": {
     "instruction_clarity": true,
     "script_tool_success": true,
@@ -20,7 +17,7 @@
     "blocking_issues": true,
     "brief_leakage": true
   },
-  "baseline_regressed": false,
+  "baseline_regressed": true,
   "briefs": {
     "already-split-structure": {
       "latest_score": 10.0,
@@ -30,8 +27,24 @@
       "brief_leakage": 0,
       "notes": "Strict v2 zero-edit validation passed. Frontmatter, Source descriptions, external context tables, relative links, and acyclic tree all validated without reading draft.md as implicit context."
     },
+    "contradictory-instructions": {
+      "latest_score": null,
+      "best_score": null,
+      "output_completeness": 100,
+      "status": "pass_intentional_stop",
+      "brief_leakage": 0,
+      "notes": "Executor stopped at contradiction check, made no structural edits, left playbook.md unchanged, and asked for resolution between keeping Setup inline and extracting it."
+    },
+    "existing-child-targeted-update": {
+      "latest_score": 9.3,
+      "best_score": 9.3,
+      "output_completeness": 100,
+      "status": "pass",
+      "brief_leakage": 0,
+      "notes": "Targeted update passed after v2.0.1 clarified legacy multi-H1 normalization and short residual sections. Existing ops child was reused and renamed to weekly-operations.md; escalation-policies.md was extracted without duplicate truth."
+    },
     "invalid-split-structure": {
-      "latest_score": 10.0,
+      "latest_score": 9.1,
       "best_score": 10.0,
       "output_completeness": 100,
       "status": "pass",
@@ -39,12 +52,12 @@
       "notes": "Strict v2 repair passed. Duplicate entrypoint resolved, missing frontmatter repaired, raw-path Source rejected, broken/cyclic links fixed, and malformed external context converted to valid tables."
     },
     "large-file": {
-      "latest_score": 10.0,
+      "latest_score": 9.8,
       "best_score": 10.0,
       "output_completeness": 100,
       "status": "pass",
       "brief_leakage": 0,
-      "notes": "Strict v2 conversion passed. Large one-file guide became a frontmatter-backed explicit tree with markdown-link Source lines, preserved critical refund text, and left draft-notes.md outside the graph."
+      "notes": "Strict v2 conversion passed. Large one-file guide became a frontmatter-backed explicit tree with markdown-link Source lines, preserved critical refund text, left draft-notes.md outside the graph, and validated nested Source links relative to the containing file."
     }
   },
   "executor_evidence": {
@@ -53,18 +66,33 @@
       "isolation_mode": "forked_workspace_with_temp_scenario",
       "confusion_log_per_step": true
     },
+    "contradictory-instructions": {
+      "agent": "Curie",
+      "isolation_mode": "isolated_disposable_copy",
+      "confusion_log_per_step": true
+    },
+    "existing-child-targeted-update": {
+      "agent": "Sagan",
+      "isolation_mode": "isolated_disposable_copy",
+      "confusion_log_per_step": true
+    },
     "invalid-split-structure": {
-      "agent": "Epicurus",
-      "isolation_mode": "forked_workspace_with_temp_scenario",
+      "agent": "Arendt",
+      "isolation_mode": "isolated_disposable_copy",
       "confusion_log_per_step": true
     },
     "large-file": {
-      "agent": "Dewey",
-      "isolation_mode": "forked_workspace_with_temp_scenario",
+      "agent": "Newton",
+      "isolation_mode": "isolated_disposable_copy",
       "confusion_log_per_step": true
     }
   },
   "changelog": {
+    "iteration_6": [
+      "Ran all five persisted briefs, including the previously unrun contradictory-instructions and existing-child-targeted-update briefs.",
+      "Clarified contradiction-stop behavior, legacy multi-H1 normalization, short residual inline sections, external shared-file boundaries, folder-backed topic criteria, and file-relative link validation.",
+      "Reran four affected briefs with separate executor subagents, then reran large-file once more after file-relative validation clarification; all passed, with contradictory-instructions passing as an intentional stop before edits."
+    ],
     "iteration_5": [
       "Upgraded agentic-markdown to strict v2 with required frontmatter, markdown-link Source lines, external Dependencies/Related tables, and deterministic traversal.",
       "Updated already-split-structure, invalid-split-structure, and large-file persisted briefs plus setup scripts for strict v2 coverage.",

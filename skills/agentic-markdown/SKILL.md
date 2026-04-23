@@ -137,18 +137,42 @@ Choose relevance from section headers, descriptions, link text, target tags, and
 
 Do not split for symmetry. Do not invent missing children only to satisfy a broken link; either create the child from real inline content or remove/inline the stub.
 
+### Contradiction Stops
+
+When step 1 finds mutually exclusive requirements:
+
+- make no structural edits
+- name the conflicting requirements concretely
+- ask the user which requirement wins
+- report validation as skipped because the transform intentionally stopped
+- do not treat later transform steps as ambiguous; they are not applicable until the conflict is resolved
+
+Read an unlinked local constraint file only when the user request, brief, or entrypoint explicitly identifies it. Otherwise, unlinked nearby files remain outside the unit.
+
+### Legacy Markdown
+
+When converting legacy Markdown that uses multiple top-level `#` headings:
+
+- keep or create one document-level `#` heading from the canonical entrypoint title
+- convert remaining top-level topic headings to `##` sections unless they become child entrypoints
+- preserve the visible heading text when extracting; only sanitize filenames
+- keep heading order stable unless validation requires moving a child link
+
 ## Splitting
 
 - keep one file by default
 - split when the entrypoint becomes hard to scan or a section is a coherent reusable topic
+- keep short residual sections inline when they are easy to scan and not reusable
 - prefer `./topic.md` for one coherent topic
-- use `./topic/index.md` only when that topic needs its own explicit children
+- use `./topic/index.md` only when that topic has multiple substantial subtopics that should be explicit children
 - never create vague files like `part-1.md`
 - sanitize filenames, not headings; `FAQ / Edge Cases` may become `faq-edge-cases.md`
 - preserve source order and meaning
 - never keep substantial duplicate truth inline and in a child
 
 Folder-backed topics are just units whose entrypoint is `index.md`; directories are never traversed implicitly.
+
+Shared reference files that are needed for interpretation but are not owned by the current tree should stay outside the tree and be listed in `Dependencies`. Do not absorb or duplicate them only to avoid an external context table.
 
 ## Validation
 
@@ -159,6 +183,7 @@ Before finishing, check:
 - each entrypoint has one top `#` heading and a short overview
 - every `Source:` sits under a section header, has a description, and uses readable Markdown-link syntax
 - every `Source:` target is relative, exists, and points to a valid entrypoint
+- resolve every relative link from the file that contains the link, not from the root entrypoint
 - no `Source:` target points to `Dependencies`, `Related`, URLs, anchors, independent sibling units, or unrelated nearby docs
 - the `Source:` graph is acyclic
 - all `Dependencies` and `Related` sections are valid two-column tables with `Document` and `Purpose`

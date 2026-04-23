@@ -20,7 +20,7 @@ pnpm dlx skills add souljorje/agent-skills
 
 | Name | Score* | Description |
 | --- | --- | --- |
-| agentic-markdown | 10.0 | Use when restructuring agent-readable Markdown into deterministic context trees with required frontmatter, explicit `Source:` child links, external context tables, and lazy traversal. |
+| agentic-markdown | 9.5 | Use when restructuring agent-readable Markdown into deterministic context trees with required frontmatter, explicit `Source:` child links, external context tables, and lazy traversal. |
 | skill-autoresearch | - | Use when building or revising a skill and you need iterative executor runs, scored confusion logs, targeted fixes, and reruns against multiple briefs until stop criteria are met. |
 | socratic-mode | 9.5 | Use for clarification through Socratic dialogue: neutral, one-question-at-a-time exploration with no solutions until motives, assumptions, constraints, or goals are clearer. |
 
