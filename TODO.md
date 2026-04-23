@@ -1,0 +1,3 @@
+- agentic markdown recipes/templates: recursive AGENTS.md, knowledge base, personal stuff, etc
+- add templates for skills
+- run skill-autoresearch for skill-autoresearch
