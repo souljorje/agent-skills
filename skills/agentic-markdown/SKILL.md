@@ -1,6 +1,6 @@
 ---
 name: agentic-markdown
-description: "Use this skill when restructuring agent-readable Markdown into deterministic context trees with required frontmatter, explicit `Source:` child links, external context tables, and lazy traversal."
+description: "Use to navigate and structure Markdown context with clear hierarchy and progressive disclosure. Follow explicit links to read only what’s needed and avoid scanning unrelated content."
 metadata:
   version: "2.0.0"
   last_updated: "2026-04-23"
@@ -8,7 +8,7 @@ metadata:
 
 # Agentic Markdown
 
-Use this skill to turn Markdown into a deterministic, human-readable context system for agents. The tree is the only primary navigation. Agents read selectively through explicit links, never by scanning nearby files or directories.
+A simple way to organize and navigate Markdown so humans and agents can quickly find what matters without guesswork. It reveals details step by step, keeps structure clear and connections explicit, and helps you focus only on what’s relevant instead of reading everything.
 
 ## Model
 
