@@ -1,239 +1,192 @@
 ---
 name: agentic-markdown
-description: "Use this skill when restructuring agent-readable Markdown into progressive-disclosure file graphs with short entrypoints, explicit relative `Source:` links, and lazy reads."
+description: "Use this skill when restructuring agent-readable Markdown into deterministic context trees with required frontmatter, explicit `Source:` child links, external context tables, and lazy traversal."
 metadata:
-  version: "1.2.2"
-  last_updated: "2026-04-20"
+  version: "2.0.0"
+  last_updated: "2026-04-23"
 ---
 
 # Agentic Markdown
 
-Use this skill to make Markdown files easier for AI agents to read incrementally and act on without guessing. Use progressive disclosure: keep entrypoints short, push detail into explicit children, and read lazily through exact paths instead of broad scanning.
+Use this skill to turn Markdown into a deterministic, human-readable context system for agents. The tree is the only primary navigation. Agents read selectively through explicit links, never by scanning nearby files or directories.
 
 ## Model
 
-Treat the docs as an explicit file graph.
+- unit: one logical context block with exactly one entrypoint
+- entrypoint: exactly one of `name.md` or `name/index.md`, never both
+- child unit: a unit reached by one structural `Source:` link from its parent
+- external context: non-tree units listed under `Dependencies` or `Related`
+- inline section: short content that remains in the current entrypoint
+- extracted section: content moved to a child unit, leaving heading, description, and `Source:`
 
-- unit: one logical documentation node with one canonical starting file
-- entrypoint: exactly one of `name.md` or `name/index.md`
-- child: a file or folder-backed subtopic reached by one explicit `Source:` line from a parent file
-- inline section: content stays under its heading in the current file
-- extracted section: content moves to a child and the parent keeps the heading plus `Source:`
-- public child: a file or folder that belongs to the same unit, not merely a nearby sibling
+No implicit discovery. File proximity, sibling files, directory contents, and backlinks do not define structure.
 
-Treat `public child` narrowly. Count it as public only if it is already referenced by `Source:`, the user explicitly says it belongs to the unit, or it is an obvious unit-owned companion that avoids a duplicate child.
+## Entrypoints
 
-During validation, you may discover a hidden public child by adjacent-file checks. Treat it as public only if its topic clearly belongs to a heading in the unit, it does not compete with another parent's topic, and the user or local instructions do not exclude it.
-
-Do not treat these as public children by default:
-
-- scratch notes, drafts, TODOs, logs, temp files, or analyst notes
-- another unit's entrypoint
-- generic nearby docs with no clear topic ownership
-- files whose relationship to the unit is unclear
-
-Use these terms consistently. Keep one entrypoint only: `name.md` or `name/index.md`, never both. `index.md` is only a folder convention; there is no implicit directory lookup.
-
-Entrypoints may mix inline sections and extracted sections:
+Every unit entrypoint must use this format:
 
 ```md
-# Purpose
-Short inline text.
+---
+title: Human Title
+tags: [tag-a, tag-b]
+---
 
-# Workflow
-One short sentence describing what this child contains.
+# Human Title
 
-Source: [Workflow](./workflow.md)
+Short overview of this unit.
 
-# Policies
-One short sentence describing what this child contains.
-
-Source: [Policies](./policies/index.md)
+## Section Name
+One or two lines describing the child content.
+Source: [Readable Title](./child.md)
 ```
 
-`Source:` is the only reference directive.
+Frontmatter rules:
 
-Canonical `Source:` form is a markdown link with a human-readable label:
+- `title` is required, string, human-readable
+- `tags` is required, flat list; it may be empty
+- frontmatter title and top `#` heading should match unless preserving an existing public title is more important
+
+Child targets are also entrypoints and must follow the same format.
+
+## Source Links
+
+`Source:` is the only structural child directive.
+
+Required form:
 
 ```md
-Source: [Workflow](./workflow.md)
+## Section Name
+One or two lines explaining why this child exists.
+Source: [Readable Title](./relative-entrypoint.md)
 ```
-
-Raw paths remain valid when brevity matters:
-
-```md
-Source: ./workflow.md
-```
-
-Default extracted-section format:
-
-- heading
-- one short factual description when it adds clarity; omit it when the heading plus `Source:` is already explicit
-- `Source:`
-
-Use a table only for dense index sections with many peer children and short descriptions. In that case, prefer:
-
-```md
-| Name | Description | Source |
-|---|---|---|
-| Workflow | Daily operating flow | [Workflow](./workflow.md) |
-| Policies | Rules and exceptions | [Policies](./policies/index.md) |
-```
-
-## Heading Identity
-
-Treat heading text and file paths as separate concerns.
-
-- keep the original heading text in the parent when replacing content with `Source:`
-- sanitize filenames, not headings; `# FAQ / Edge Cases` may map to `faq-edge-cases.md`
-- preserve heading order and subheading order inside moved content
-- default a standalone child file to `# Topic`; if you repeat a top heading in the child, use the exact same topic label
-- in folder-backed topics, `index.md` should use the real topic heading, not a placeholder
-- in folder-backed topics, keep every extracted subtopic heading in the index, including the first subtopic after the top-level topic heading
-
-## Read
-
-Read inline text directly.
-
-- follow only explicit relative `Source:` targets, either as raw paths such as `./file.md` or as markdown links such as `[Workflow](./workflow.md)`
-- when a `Source:` line uses a markdown link, treat the link target as the path and the link label as human-facing text only
-- resolve each `Source:` target relative to the file that contains it, then read lazily and stay on the explicit unit graph unless validation requires adjacent-file checks
-- treat `nearby explicit instructions` narrowly: the user request, files the user explicitly points to, files already on the unit graph, and any local constraint file explicitly named by the user or brief
-
-## Contradictions
-
-Check for contradictions before structural edits.
-
-- look for instructions that cannot both be true at once, such as conflicting split requests, incompatible path requirements, or one instruction that says to preserve a child while another says to replace it
-- if the user points to a nearby instruction file or local constraint that governs the unit, read it before refactoring
-- prefer the most specific in-scope instruction when there is an obvious precedence relationship
-- if the conflict is real and unresolved, surface it to the user before refactoring the unit
-- do not paper over contradictions by producing a hybrid structure that violates the file graph model
-
-## Procedure
-
-Use this transform order. Do not skip ahead.
-
-1. check for contradictions in the user request, current file graph, and nearby explicit instructions. If a real unresolved conflict remains, stop and ask the user to resolve it before refactoring.
-2. identify the unit boundary, canonical entrypoint, and any existing public children
-3. inventory the entrypoint headings in order and classify each as inline, flat child, or folder-backed topic
-4. choose child paths; reuse a good existing public child when it already matches the topic, and do not create duplicates or relabel ambiguous nearby files as public. In targeted updates, preserve an existing public child unless it fails validation or no longer matches the topic.
-5. rewrite the parent in place without changing the entrypoint unless asked; preserve heading order and heading identity, then write each child in the same logical order without absorbing unrelated docs. If the unit already satisfies the model and validation checks, make zero edits and report none.
-6. validate the unit and fix issues in the validation order below; stop once the unit is explicit and scannable, not symmetric
-
-## Split
-
-Split only when it improves readability and preserves meaning, order, and parent-child references.
 
 Rules:
 
-- keep one file by default; split when the result is clearly easier to scan, especially once a section grows large
-- prefer one extracted child per coherent topic or workflow
-- prefer `Source: [Human Readable Name](./name.md)` for one coherent extracted topic; this is usually best for long linear sections such as steps, logs, examples, and FAQs
-- use `Source: [Human Readable Name](./name/index.md)` only when the topic needs two or more descriptive child files or already contains multiple descriptive subtopics that would stay explicit as children
-- raw-path `Source:` lines remain valid, but prefer labeled markdown links when writing or rewriting parent files for humans
-- do not create a folder that contains only `index.md` unless the user explicitly wants folder layout
-- do not split for symmetry; one large section is fine if keeping it whole is clearer
-- child filenames must be descriptive
-- when renaming a vague extracted child, derive the new filename from the child heading or topic label, not from incidental brief phrasing
-- never create vague chunks like `part-1.md`
-- stop splitting when the entrypoint is scannable
+- must be under a section header
+- must have a useful one- or two-line description before it
+- must use a Markdown link with readable label text
+- must use a relative path
+- must point to a valid unit entrypoint
+- must not point to external units, independent sibling units, URLs, anchors, or unlinked nearby files
+- raw paths such as `Source: ./workflow.md` are invalid in v2
 
-Treat `scannable` concretely: a human should be able to identify the entrypoint structure in one quick pass through headings, short descriptions, and `Source:` lines without opening every child immediately.
+Semantics:
 
-When you split, replace the moved content in the parent with the heading plus `Source:`. Do not keep the same substantial content both inline and extracted.
+- defines the tree hierarchy
+- participates in primary traversal
+- is eligible for recursive descent when relevant
+- order follows the `Source:` line order in the file
 
-For extracted sections, prefer heading + short description + `Source:` over title-only links. Use tables only when they improve scanability more than normal headings.
+## External Context
 
-## Examples
+External context is explicit and not part of the tree.
 
-### Default split
+Use `Dependencies` for external units required for correct interpretation:
 
-```text
-guide.md
-setup.md
-workflow.md
-```
-
-`guide.md`:
 ```md
-# Purpose
-Short inline text.
+## Dependencies
 
-## Setup
-Source: [Setup](./setup.md)
-
-## Workflow
-Source: [Workflow](./workflow.md)
+| Document | Purpose |
+|---|---|
+| [Glossary](../glossary.md) | Defines required terms |
 ```
 
-### Folder-backed split
+Use `Related` for optional expansion:
 
-```text
-guide.md
-detailed-process.md
-setup/
-  index.md
-  overview.md
-  exceptions.md
-```
-
-`guide.md`:
 ```md
-# Purpose
-Short inline text
+## Related
 
-## Setup
-Source: [Setup](./setup/index.md)
+| Document | Purpose |
+|---|---|
+| [Patterns](../patterns.md) | Alternative approaches |
 ```
 
-`setup/index.md`:
-```md
-# Setup
-Source: [Overview](./overview.md)
+Rules for both tables:
 
-## Exceptions
-Source: [Exceptions](./exceptions.md)
-```
+- must be Markdown tables with exactly `Document` and `Purpose` columns
+- each row must include one relative Markdown link and a short purpose
+- links must not be children of the current unit
+- links are external context, not structural hierarchy
 
-### Filename patterns
+Read `Dependencies` only when ambiguity, undefined terms, or correctness needs require them. Read `Related` only when more context, comparison, or exploration is useful.
 
-- `# Purpose` -> `purpose.md`
-- `# FAQ / Edge Cases` -> `faq-edge-cases.md`
-- `# Background Notes` -> `background-notes/index.md`
+## Traversal
 
-## Validate
+Follow this algorithm:
+
+1. Open the entrypoint.
+2. Read frontmatter, overview, section headers, descriptions, and link labels.
+3. If sufficient, stop.
+4. For each relevant `Source:`, open the child entrypoint.
+5. If ambiguity or missing prerequisite remains, open relevant `Dependencies`.
+6. If still incomplete or expansion is useful, open relevant `Related`.
+7. Never scan sibling files, directories, or unlinked files.
+
+Choose relevance from section headers, descriptions, link text, target tags, and the current task. Do not auto-expand every child, dependency, or related document.
+
+## Transform Procedure
+
+1. Check the user request, explicit local constraints, and current linked graph for contradictions. If a real conflict remains, stop and ask for resolution.
+2. Identify the unit boundary from the requested entrypoint and explicit links only.
+3. Choose the canonical entrypoint; if both `name.md` and `name/index.md` exist for one unit, keep one and remove or convert the duplicate.
+4. Add or repair required frontmatter on every unit entrypoint.
+5. Inventory sections in order. Keep short sections inline; extract only coherent topics that improve scanability.
+6. For extracted topics, preserve heading identity, choose descriptive relative paths, move content into child entrypoints, and leave description plus `Source:`.
+7. Convert external non-child references to `Dependencies` or `Related` tables when they are needed.
+8. Validate in the order below and fix failures before finishing.
+
+Do not split for symmetry. Do not invent missing children only to satisfy a broken link; either create the child from real inline content or remove/inline the stub.
+
+## Splitting
+
+- keep one file by default
+- split when the entrypoint becomes hard to scan or a section is a coherent reusable topic
+- prefer `./topic.md` for one coherent topic
+- use `./topic/index.md` only when that topic needs its own explicit children
+- never create vague files like `part-1.md`
+- sanitize filenames, not headings; `FAQ / Edge Cases` may become `faq-edge-cases.md`
+- preserve source order and meaning
+- never keep substantial duplicate truth inline and in a child
+
+Folder-backed topics are just units whose entrypoint is `index.md`; directories are never traversed implicitly.
+
+## Validation
 
 Before finishing, check:
 
-- one entrypoint only: `name.md` or `name/index.md`, not both
-- every `Source:` target exists and resolves relative to the file that contains it
-- in markdown-link `Source:` lines, the label and target do not contradict the surrounding topic
-- the `Source:` graph is acyclic and traversal order follows the `Source:` line order
-- every public child is reachable from the entrypoint; do not treat non-unit companions as public children
-- each child has one parent by default unless the user explicitly wants shared docs
-- in a folder-backed topic, every public descendant belongs to that subtree and is reachable from its `index.md`
-- extracted topics preserve heading identity; filenames may change, topic labels should not
-- no parent has both substantial inline content and `Source:` for the same topic
-- no extracted child has a vague name
-- broken placeholder `Source:` stubs are removed or inlined; do not invent missing child files just to satisfy the link
-- folder-backed sources have `index.md`
-- nesting is no deeper than needed
+- exactly one entrypoint per unit: `name.md` or `name/index.md`
+- every entrypoint has valid frontmatter with `title` and `tags`
+- each entrypoint has one top `#` heading and a short overview
+- every `Source:` sits under a section header, has a description, and uses readable Markdown-link syntax
+- every `Source:` target is relative, exists, and points to a valid entrypoint
+- no `Source:` target points to `Dependencies`, `Related`, URLs, anchors, independent sibling units, or unrelated nearby docs
+- the `Source:` graph is acyclic
+- all `Dependencies` and `Related` sections are valid two-column tables with `Document` and `Purpose`
+- every dependency/related row has a relative Markdown link and purpose text
+- no broken links in structural or external-context sections
+- no implicit filesystem discovery is required to understand the unit
 
-Fix in this order: 
-- entrypoints
-- broken paths
-- graph mistakes
-- hidden/orphaned public files
-- mixed truth
-- vague names
-- needless depth
+Fix in this order:
+
+1. duplicate entrypoints
+2. missing or invalid frontmatter
+3. malformed `Source:`
+4. broken links
+5. graph cycles or wrong hierarchy
+6. malformed external-context tables
+7. duplicate inline/extracted truth
+8. vague names or needless depth
+
+## Backlinks
+
+Backlinks are optional and non-canonical. If needed, generate them outside source files. They must never affect traversal or validation.
 
 ## Output
 
 Report:
 
 - final tree
+- external context sections touched
 - validation result
 - files changed
 - any intentionally inline large section and why it stayed inline

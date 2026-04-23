@@ -2,13 +2,14 @@
 set -euo pipefail
 
 cat > support-guide.md <<'EOF'
-# Purpose
+# Support Guide
+
 Refund and login help keeps accounts moving.
 Support staff should protect customer trust.
 Handle payment issues without exposing secrets.
 Escalate carefully when identity is unclear.
 
-# Quick Rules
+## Quick Rules
 - Verify the request goal before editing anything.
 - Never reveal private account data in chat.
 - Use the smallest effective account change.
@@ -20,7 +21,7 @@ Escalate carefully when identity is unclear.
 - Escalate suspicious patterns early.
 - Close loops with the user after resolution.
 
-# Refund Workflow
+## Refund Workflow
 EOF
 for i in $(seq 1 130); do
   if [ "$i" -eq 61 ]; then
@@ -32,26 +33,26 @@ done
 
 cat >> support-guide.md <<'EOF'
 
-# Access Recovery
-## Email Reset
+## Access Recovery
+### Email Reset
 EOF
 for i in $(seq 1 45); do printf 'Email reset %03d\n' "$i" >> support-guide.md; done
 
 cat >> support-guide.md <<'EOF'
 
-## Device Challenge
+### Device Challenge
 EOF
 for i in $(seq 1 40); do printf 'Device check %03d\n' "$i" >> support-guide.md; done
 
 cat >> support-guide.md <<'EOF'
 
-## Escalation
+### Escalation
 EOF
 for i in $(seq 1 28); do printf 'Recovery escalation %03d\n' "$i" >> support-guide.md; done
 
 cat >> support-guide.md <<'EOF'
 
-# FAQ / Edge Cases
+## FAQ / Edge Cases
 EOF
 for i in $(seq 1 32); do printf 'FAQ case %03d\n' "$i" >> support-guide.md; done
 

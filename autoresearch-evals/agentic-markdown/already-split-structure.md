@@ -1,11 +1,11 @@
-# Test Brief: Validate Already-Scannable Unit Without Churn
+# Test Brief: Validate Already-Scannable v2 Unit Without Churn
 
 > Simulated input for testing the agentic-markdown skill.
 > The executor agent treats this as what a real user would provide.
 
 ## Scenario
 
-Validate a unit that already follows the skill well. The correct behavior is to keep the graph explicit and stable, avoid symmetry edits, avoid cosmetic renames, and stop once the unit is explicit and scannable.
+Validate a unit that already follows strict v2. The correct behavior is to keep the explicit tree stable, avoid cosmetic renames, avoid reading unlinked nearby files, and stop once frontmatter, `Source:` links, and external context tables validate.
 
 ## Fixture Source
 
@@ -24,15 +24,16 @@ Validate a unit that already follows the skill well. The correct behavior is to 
 ## Expected Output
 
 - `guide.md` remains the only unit entrypoint.
-- `setup.md` remains a flat child, referenced with labeled `Source:` syntax such as `Source: [Setup](./setup.md)`.
-- `policies/index.md` remains a folder-backed topic with reachable descendants.
+- `guide.md`, `setup.md`, `policies/index.md`, and `policies/exceptions.md` keep valid `title` and `tags` frontmatter.
+- Child links remain labeled markdown `Source:` lines with descriptions.
+- `## Dependencies` and `## Related` remain valid two-column tables and are not treated as children.
 - No structural churn is introduced only for symmetry.
-- No cosmetic rename is performed if the current paths are already valid and descriptive.
-- `draft.md` stays outside the unit graph.
-- Final response includes the final tree, files changed, and validation summary.
+- `draft.md` stays outside the unit graph and is not read as implicit context.
+- Final response includes the final tree, external context touched, files changed, and validation summary.
 
 ## Edge Cases Included
 
-- Already-good structure: correct handling makes minimal or zero edits.
+- Already-good v2 structure: correct handling makes minimal or zero edits.
 - Mixed flat and folder-backed children: correct handling preserves asymmetry when it is clearer.
+- External context tables: correct handling validates them without adding them to the tree.
 - Nearby draft file: correct handling does not absorb it into the unit.
