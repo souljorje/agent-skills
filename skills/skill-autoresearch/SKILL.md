@@ -1,8 +1,8 @@
 ---
 name: skill-autoresearch
-description: Improve a skill through iterative executor runs, quantitative scoring, targeted fixes, and reruns until stop criteria are met. Inspired by Karpathy's autoresearch.
+description: Use this skill when building or revising a skill and you need iterative executor runs, scored confusion logs, targeted fixes, and reruns against multiple briefs until stop criteria are met. Inspired by Karpathy's autoresearch.
 metadata:
-  version: "1.1.0"
+  version: "1.1.1"
   last_updated: "2026-04-20"
   forked_from: "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"
 ---

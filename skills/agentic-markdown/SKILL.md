@@ -1,8 +1,8 @@
 ---
 name: agentic-markdown
-description: "Restructure agent-readable Markdown files with progressive disclosure: short entrypoints, explicit relative sources, and lazy reading for AI agents."
+description: "Use this skill when restructuring agent-readable Markdown into progressive-disclosure file graphs with short entrypoints, explicit relative `Source:` links, and lazy reads."
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
   last_updated: "2026-04-20"
 ---
 
