@@ -1,6 +1,6 @@
 ---
 name: skill-autoresearch
-description: Use this skill when building or revising a skill and you need iterative executor runs, scored confusion logs, targeted fixes, and reruns against multiple briefs until stop criteria are met. Inspired by Karpathy's autoresearch.
+description: Validates and improves agentic skills by running isolated executor agents against test briefs, scoring confusion, fixing unclear instructions, and rerunning until stop criteria pass. Use when asked to test or evaluate a skill, find skill failure modes, or harden a skill before reuse. Inspired by Karpathy's autoresearch.
 metadata:
   version: "1.2.1"
   last_updated: "2026-06-02"
