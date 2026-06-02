@@ -62,6 +62,36 @@
       },
       "notes": "Strict v2 zero-edit validation passed. Frontmatter, Source descriptions, context tables, relative links, and acyclic tree all validated without reading draft.md as implicit context."
     },
+    "agentic-control-files-no-frontmatter": {
+      "status": "pass",
+      "results": {
+        "instruction_clarity": {
+          "score": 9.0,
+          "pass": true
+        },
+        "script_tool_success": {
+          "score": 1.0,
+          "pass": true
+        },
+        "output_completeness": {
+          "score": 100,
+          "pass": true
+        },
+        "mode_coverage": {
+          "score": 1.0,
+          "pass": true
+        },
+        "blocking_issues": {
+          "score": 0,
+          "pass": true
+        },
+        "brief_specific_leakage": {
+          "score": 0,
+          "pass": true
+        }
+      },
+      "notes": "Control files stayed frontmatter-free; the SKILL.md exception and validation checklist were unambiguous."
+    },
     "contradictory-instructions": {
       "status": "pass",
       "results": {

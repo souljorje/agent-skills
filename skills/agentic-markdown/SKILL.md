@@ -1,6 +1,6 @@
 ---
 name: agentic-markdown
-description: "Use to navigate and structure Markdown context with clear hierarchy and progressive disclosure. Follow explicit links to read only what’s needed and avoid scanning unrelated content."
+description: "Maintains Markdown docs as explicit agent-readable context trees. Use when the user asks to create or update Markdown docs, split a large Markdown file, normalize or improve documentation structure, repair broken document trees, or make agent navigation explicit. Do not use for general prose editing, marketing copy, or unlinked repo-wide documentation cleanup."
 metadata:
   version: "2.0.2"
   last_updated: "2026-06-02"
@@ -45,6 +45,7 @@ Frontmatter rules:
 - `title` is required, string, human-readable
 - `tags` is required, flat list; it may be empty
 - frontmatter title and top `#` heading should match unless preserving an existing public title is more important
+- do not add frontmatter to agent-instruction files such as `SKILL.md`, `AGENTS.md`, `CLAUDE.md`, or similar agentic control files unless an explicit stronger local convention already requires it
 
 Child targets are also entrypoints and must follow the same format.
 
@@ -142,8 +143,16 @@ Choose relevance from section headers, descriptions, link text, target tags, and
 3. Choose the canonical entrypoint; if both `name.md` and `name/index.md` exist for one unit, keep one and remove or convert the duplicate.
 4. Add or repair required frontmatter on every unit entrypoint.
 5. Inventory sections in order. Keep short sections inline; extract only coherent topics that improve scanability.
-6. Reuse existing linked documents before creating new ones. If an existing owned child already matches the topic, merge the new material into that child. If a non-child linked document already owns the truth, reference it with inline links, `Dependencies`, or `Related` instead of copying facts.
-7. Create a new child only when the content is new, owned by the current tree, and cannot fit cleanly into an existing linked document.
+6. Choose merge, reference, or create by this rule:
+
+| Situation | Action |
+|---|---|
+| An existing owned child already matches the topic | Merge the new material into that child |
+| A non-child linked document already owns the truth | Reference it with inline links, `Dependencies`, or `Related`; do not copy facts |
+| The content is new, owned by the current tree, and does not fit cleanly into an existing linked document | Create a new child |
+| Ownership is unclear or multiple linked documents could plausibly own the topic | Stop and ask |
+
+7. Create a new child only when the decision rule above resolves to create.
 8. For extracted topics, preserve heading identity, choose descriptive relative paths, move content into child entrypoints, and leave description plus `Source:`.
 9. Convert non-child context references to `Dependencies` or `Related` tables when they are needed.
 10. Validate in the order below and fix failures before finishing.
@@ -189,34 +198,7 @@ Shared reference files that are needed for interpretation but are not owned by t
 
 ## Validation
 
-Before finishing, check:
-
-- exactly one entrypoint per unit: `name.md` or `name/index.md`
-- every entrypoint has valid frontmatter with `title` and `tags`
-- each entrypoint has one top `#` heading and a short overview
-- every `Source:` sits under a section header, has a description, and uses readable Markdown-link syntax
-- every `Source:` target is relative, exists, and points to a valid entrypoint
-- resolve every relative link from the file that contains the link, not from the root entrypoint
-- no `Source:` target points to `Dependencies`, `Related`, URLs, anchors, independent sibling units, or unrelated nearby docs
-- the `Source:` graph is acyclic
-- all `Dependencies` and `Related` sections are valid two-column tables with `Document` and `Purpose`
-- every dependency/related row has a relative Markdown link and purpose text
-- no broken links in structural or context sections
-- ordinary inline links do not need to appear in `Dependencies` or `Related`
-- no new child duplicates the topic or stable facts of an existing linked document when merge or reference would suffice
-- reused linked documents are preferred over creating parallel truth
-- no implicit filesystem discovery is required to understand the unit
-
-Fix in this order:
-
-1. duplicate entrypoints
-2. missing or invalid frontmatter
-3. malformed `Source:`
-4. broken links
-5. graph cycles or wrong hierarchy
-6. malformed context tables
-7. duplicate inline/extracted truth
-8. vague names or needless depth
+Before finishing, read and apply [validation checklist](./references/validation-checklist.md). This is the required final pass. Do not finish without using it.
 
 ## Backlinks
 
