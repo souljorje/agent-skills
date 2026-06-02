@@ -26,6 +26,11 @@ This is the required final pass after restructuring or updating a unit. Use it e
 - no new child duplicates the topic or stable facts of an existing linked document when merge or reference would suffice
 - reused linked documents are preferred over creating parallel truth
 
+## Presenting Data
+
+- no HTML in the output: the unit is Markdown only
+- no comparison left as a dataless table skeleton (blank, `—`, or "not provided" cells); a comparison named without numbers is prose plus a labeled stub, never invented figures
+
 ## Fix In This Order
 
 1. duplicate entrypoints
@@ -36,3 +41,4 @@ This is the required final pass after restructuring or updating a unit. Use it e
 6. malformed context tables
 7. duplicate inline/extracted truth
 8. vague names or needless depth
+9. HTML output or a dataless table skeleton
