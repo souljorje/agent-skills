@@ -1,3 +1,4 @@
 - agentic markdown recipes/templates: recursive AGENTS.md, knowledge base, personal stuff, etc
 - add templates for skills
 - run skill-autoresearch for skill-autoresearch
+- add content-format table for agentic-markdown

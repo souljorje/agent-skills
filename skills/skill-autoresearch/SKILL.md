@@ -2,7 +2,7 @@
 name: skill-autoresearch
 description: Validates and improves agentic skills by running isolated executor agents against test briefs, scoring confusion, fixing unclear instructions, and rerunning until stop criteria pass. Use when asked to test or evaluate a skill, find skill failure modes, or harden a skill before reuse. Inspired by Karpathy's autoresearch.
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
   last_updated: "2026-06-02"
   forked_from: "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"
 ---
