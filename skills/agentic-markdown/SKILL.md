@@ -2,7 +2,7 @@
 name: agentic-markdown
 description: "Use to navigate and structure Markdown context with clear hierarchy and progressive disclosure. Follow explicit links to read only what’s needed and avoid scanning unrelated content."
 metadata:
-  version: "2.0.1"
+  version: "2.0.2"
   last_updated: "2026-06-02"
 ---
 
@@ -142,9 +142,11 @@ Choose relevance from section headers, descriptions, link text, target tags, and
 3. Choose the canonical entrypoint; if both `name.md` and `name/index.md` exist for one unit, keep one and remove or convert the duplicate.
 4. Add or repair required frontmatter on every unit entrypoint.
 5. Inventory sections in order. Keep short sections inline; extract only coherent topics that improve scanability.
-6. For extracted topics, preserve heading identity, choose descriptive relative paths, move content into child entrypoints, and leave description plus `Source:`.
-7. Convert non-child context references to `Dependencies` or `Related` tables when they are needed.
-8. Validate in the order below and fix failures before finishing.
+6. Reuse existing linked documents before creating new ones. If an existing owned child already matches the topic, merge the new material into that child. If a non-child linked document already owns the truth, reference it with inline links, `Dependencies`, or `Related` instead of copying facts.
+7. Create a new child only when the content is new, owned by the current tree, and cannot fit cleanly into an existing linked document.
+8. For extracted topics, preserve heading identity, choose descriptive relative paths, move content into child entrypoints, and leave description plus `Source:`.
+9. Convert non-child context references to `Dependencies` or `Related` tables when they are needed.
+10. Validate in the order below and fix failures before finishing.
 
 Do not split for symmetry. Do not invent missing children only to satisfy a broken link; either create the child from real inline content or remove/inline the stub.
 
@@ -201,6 +203,8 @@ Before finishing, check:
 - every dependency/related row has a relative Markdown link and purpose text
 - no broken links in structural or context sections
 - ordinary inline links do not need to appear in `Dependencies` or `Related`
+- no new child duplicates the topic or stable facts of an existing linked document when merge or reference would suffice
+- reused linked documents are preferred over creating parallel truth
 - no implicit filesystem discovery is required to understand the unit
 
 Fix in this order:
@@ -224,6 +228,8 @@ Report:
 
 - final tree
 - context sections touched
+- reused existing docs
+- new docs created
 - validation result
 - files changed
 - any intentionally inline large section and why it stayed inline

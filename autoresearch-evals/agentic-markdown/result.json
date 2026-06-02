@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "skill": "agentic-markdown",
   "skill_path": "skills/agentic-markdown/SKILL.md",
-  "skill_version_tested": "2.0.1",
+  "skill_version_tested": "2.0.2",
   "updated_at": "2026-06-02",
   "latest_average": 9.5,
   "results": {
@@ -177,6 +177,66 @@
         }
       },
       "notes": "Context-link clarification passed without edits. Workflow stayed the only Source child, glossary stayed in Dependencies, response-patterns stayed in Related, and inline example and citation links stayed inline."
+    },
+    "merge-into-existing-child": {
+      "status": "pass",
+      "results": {
+        "instruction_clarity": {
+          "score": 9.5,
+          "pass": true
+        },
+        "script_tool_success": {
+          "score": 1.0,
+          "pass": true
+        },
+        "output_completeness": {
+          "score": 100,
+          "pass": true
+        },
+        "mode_coverage": {
+          "score": 1.0,
+          "pass": true
+        },
+        "blocking_issues": {
+          "score": 0,
+          "pass": true
+        },
+        "brief_specific_leakage": {
+          "score": 0,
+          "pass": true
+        }
+      },
+      "notes": "Passed: the new weekly review material was merged into existing weekly-operations.md, team-guide.md stayed canonical, and no sibling child was created."
+    },
+    "reference-existing-doc": {
+      "status": "pass",
+      "results": {
+        "instruction_clarity": {
+          "score": 9.5,
+          "pass": true
+        },
+        "script_tool_success": {
+          "score": 1.0,
+          "pass": true
+        },
+        "output_completeness": {
+          "score": 100,
+          "pass": true
+        },
+        "mode_coverage": {
+          "score": 1.0,
+          "pass": true
+        },
+        "blocking_issues": {
+          "score": 0,
+          "pass": true
+        },
+        "brief_specific_leakage": {
+          "score": 0,
+          "pass": true
+        }
+      },
+      "notes": "Existing glossary ownership was preserved and referenced through the playbook dependency table; no new docs or duplicate stable facts were needed."
     },
     "large-file": {
       "status": "pass",
