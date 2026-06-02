@@ -68,7 +68,6 @@ Rules:
 - must use a relative path
 - must point to a valid unit entrypoint
 - must not point to external units, independent sibling units, URLs, anchors, or unlinked nearby files
-- raw paths such as `Source: ./workflow.md` are invalid in v2
 
 Semantics:
 
