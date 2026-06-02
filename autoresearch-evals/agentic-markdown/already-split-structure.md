@@ -5,7 +5,7 @@
 
 ## Scenario
 
-Validate a unit that already follows strict v2. The correct behavior is to keep the explicit tree stable, avoid cosmetic renames, avoid reading unlinked nearby files, and stop once frontmatter, `Source:` links, and external context tables validate.
+Validate a unit that already follows strict v2. The correct behavior is to keep the explicit tree stable, avoid cosmetic renames, avoid reading unlinked nearby files, and stop once frontmatter, `Source:` links, and context tables validate.
 
 ## Fixture Source
 
@@ -29,7 +29,7 @@ Validate a unit that already follows strict v2. The correct behavior is to keep 
 - `## Dependencies` and `## Related` remain valid two-column tables and are not treated as children.
 - No structural churn is introduced only for symmetry.
 - `draft.md` stays outside the unit graph and is not read as implicit context.
-- Final response includes the final tree, external context touched, files changed, and validation summary.
+- Final response includes the final tree, context sections touched, files changed, and validation summary.
 
 ## Edge Cases Included
 

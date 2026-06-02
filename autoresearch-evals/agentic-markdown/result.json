@@ -2,8 +2,8 @@
   "schema_version": "1.0",
   "skill": "agentic-markdown",
   "skill_path": "skills/agentic-markdown/SKILL.md",
-  "skill_version_tested": "2.0.0",
-  "updated_at": "2026-04-23",
+  "skill_version_tested": "2.0.1",
+  "updated_at": "2026-06-02",
   "latest_average": 9.5,
   "results": {
     "instruction_clarity": {
@@ -60,7 +60,7 @@
           "pass": true
         }
       },
-      "notes": "Strict v2 zero-edit validation passed. Frontmatter, Source descriptions, external context tables, relative links, and acyclic tree all validated without reading draft.md as implicit context."
+      "notes": "Strict v2 zero-edit validation passed. Frontmatter, Source descriptions, context tables, relative links, and acyclic tree all validated without reading draft.md as implicit context."
     },
     "contradictory-instructions": {
       "status": "pass",
@@ -146,7 +146,37 @@
           "pass": true
         }
       },
-      "notes": "Strict v2 repair passed. Duplicate entrypoint resolved, missing frontmatter repaired, raw-path Source rejected, broken/cyclic links fixed, and malformed external context converted to valid tables."
+      "notes": "Strict v2 repair passed. Duplicate entrypoint resolved, missing frontmatter repaired, raw-path Source rejected, broken/cyclic links fixed, and malformed context tables converted to valid tables."
+    },
+    "inline-links-vs-context-links": {
+      "status": "pass",
+      "results": {
+        "instruction_clarity": {
+          "score": 9.5,
+          "pass": true
+        },
+        "script_tool_success": {
+          "score": 1.0,
+          "pass": true
+        },
+        "output_completeness": {
+          "score": 100,
+          "pass": true
+        },
+        "mode_coverage": {
+          "score": 1.0,
+          "pass": true
+        },
+        "blocking_issues": {
+          "score": 0,
+          "pass": true
+        },
+        "brief_specific_leakage": {
+          "score": 0,
+          "pass": true
+        }
+      },
+      "notes": "Context-link clarification passed without edits. Workflow stayed the only Source child, glossary stayed in Dependencies, response-patterns stayed in Related, and inline example and citation links stayed inline."
     },
     "large-file": {
       "status": "pass",

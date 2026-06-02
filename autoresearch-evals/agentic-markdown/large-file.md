@@ -33,7 +33,7 @@ Restructure one large Markdown guide into a strict v2 unit. The correct behavior
 - `Refund step 061: Never ask for a full card number.` is preserved in extracted content.
 - No duplicate entrypoint such as both `support-guide.md` and `support-guide/index.md`.
 - No raw-path `Source:` lines or broken links remain.
-- Final response includes the final tree, external context touched, files changed, and validation summary.
+- Final response includes the final tree, context sections touched, files changed, and validation summary.
 
 ## Edge Cases Included
 

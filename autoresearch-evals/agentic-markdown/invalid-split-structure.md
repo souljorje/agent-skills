@@ -5,7 +5,7 @@
 
 ## Scenario
 
-Repair an already-split Markdown unit that violates strict v2 rules. The correct behavior is to fix validation in order: duplicate entrypoints, missing frontmatter, malformed `Source:`, broken links, graph cycles, malformed external context tables, mixed truth, vague names, and needless depth.
+Repair an already-split Markdown unit that violates strict v2 rules. The correct behavior is to fix validation in order: duplicate entrypoints, missing frontmatter, malformed `Source:`, broken links, graph cycles, malformed context tables, mixed truth, vague names, and needless depth.
 
 ## Fixture Source
 
@@ -33,7 +33,7 @@ Repair an already-split Markdown unit that violates strict v2 rules. The correct
 - `## Dependencies` and `## Related` are valid `Document | Purpose` tables, with relative links only.
 - `refund-exceptions.md` is either reachable from the entrypoint or intentionally absorbed so it is no longer a hidden public file.
 - `# Incident Response` does not keep substantial inline content and `Source:` for the same topic.
-- Final response includes the final tree, external context touched, files changed, and validation summary.
+- Final response includes the final tree, context sections touched, files changed, and validation summary.
 
 ## Edge Cases Included
 
@@ -41,4 +41,4 @@ Repair an already-split Markdown unit that violates strict v2 rules. The correct
 - Missing frontmatter: correct handling repairs every unit entrypoint.
 - Raw-path Source: correct handling rejects v1 syntax in v2.
 - Broken path plus cycle plus shared child: correct handling repairs graph validity, not just formatting.
-- Malformed external table: correct handling separates external context from hierarchy.
+- Malformed context table: correct handling separates context links from hierarchy.

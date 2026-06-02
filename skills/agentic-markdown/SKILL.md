@@ -2,8 +2,8 @@
 name: agentic-markdown
 description: "Use to navigate and structure Markdown context with clear hierarchy and progressive disclosure. Follow explicit links to read only what’s needed and avoid scanning unrelated content."
 metadata:
-  version: "2.0.0"
-  last_updated: "2026-04-23"
+  version: "2.0.1"
+  last_updated: "2026-06-02"
 ---
 
 # Agentic Markdown
@@ -15,7 +15,7 @@ A simple way to organize and navigate Markdown so humans and agents can quickly 
 - unit: one logical context block with exactly one entrypoint
 - entrypoint: exactly one of `name.md` or `name/index.md`, never both
 - child unit: a unit reached by one structural `Source:` link from its parent
-- external context: non-tree units listed under `Dependencies` or `Related`
+- context link: a non-child link outside the current unit's owned `Source:` tree
 - inline section: short content that remains in the current entrypoint
 - extracted section: content moved to a child unit, leaving heading, description, and `Source:`
 
@@ -67,20 +67,21 @@ Rules:
 - must use a Markdown link with readable label text
 - must use a relative path
 - must point to a valid unit entrypoint
-- must not point to external units, independent sibling units, URLs, anchors, or unlinked nearby files
+- must not point to non-child context documents, independent sibling units, URLs, anchors, or unlinked nearby files
 
 Semantics:
 
-- defines the tree hierarchy
+- defines the tree hierarchy for owned child units only
 - participates in primary traversal
+- is only for owned child units in the primary traversal tree
 - is eligible for recursive descent when relevant
 - order follows the `Source:` line order in the file
 
-## External Context
+## Context Links
 
-External context is explicit and not part of the tree.
+Context links are explicit and not part of the current unit's owned `Source:` tree. They may point inside or outside the wiki.
 
-Use `Dependencies` for external units required for correct interpretation:
+Use `Dependencies` for non-child documents required for correct interpretation:
 
 ```md
 ## Dependencies
@@ -90,7 +91,7 @@ Use `Dependencies` for external units required for correct interpretation:
 | [Glossary](../glossary.md) | Defines required terms |
 ```
 
-Use `Related` for optional expansion:
+Use `Related` for non-child documents that provide optional expansion:
 
 ```md
 ## Related
@@ -105,7 +106,18 @@ Rules for both tables:
 - must be Markdown tables with exactly `Document` and `Purpose` columns
 - each row must include one relative Markdown link and a short purpose
 - links must not be children of the current unit
-- links are external context, not structural hierarchy
+- links may point inside or outside the wiki
+- links are context links, not structural hierarchy
+
+### Inline Links
+
+Ordinary Markdown inline links are allowed for local references, citations, examples, or supporting material that do not define a unit-level relationship.
+
+Do not force every non-child link into `Dependencies` or `Related`.
+
+- promote an inline link to `Dependencies` when the linked document is required to correctly understand the unit
+- promote an inline link to `Related` when it is useful optional context for the whole unit or section
+- promote an inline link to `Source:` only when it is an owned child unit
 
 Read `Dependencies` only when ambiguity, undefined terms, or correctness needs require them. Read `Related` only when more context, comparison, or exploration is useful.
 
@@ -131,7 +143,7 @@ Choose relevance from section headers, descriptions, link text, target tags, and
 4. Add or repair required frontmatter on every unit entrypoint.
 5. Inventory sections in order. Keep short sections inline; extract only coherent topics that improve scanability.
 6. For extracted topics, preserve heading identity, choose descriptive relative paths, move content into child entrypoints, and leave description plus `Source:`.
-7. Convert external non-child references to `Dependencies` or `Related` tables when they are needed.
+7. Convert non-child context references to `Dependencies` or `Related` tables when they are needed.
 8. Validate in the order below and fix failures before finishing.
 
 Do not split for symmetry. Do not invent missing children only to satisfy a broken link; either create the child from real inline content or remove/inline the stub.
@@ -171,7 +183,7 @@ When converting legacy Markdown that uses multiple top-level `#` headings:
 
 Folder-backed topics are just units whose entrypoint is `index.md`; directories are never traversed implicitly.
 
-Shared reference files that are needed for interpretation but are not owned by the current tree should stay outside the tree and be listed in `Dependencies`. Do not absorb or duplicate them only to avoid an external context table.
+Shared reference files that are needed for interpretation but are not owned by the current tree should stay outside the tree and be listed in `Dependencies`. Do not absorb or duplicate them only to avoid a context section.
 
 ## Validation
 
@@ -187,7 +199,8 @@ Before finishing, check:
 - the `Source:` graph is acyclic
 - all `Dependencies` and `Related` sections are valid two-column tables with `Document` and `Purpose`
 - every dependency/related row has a relative Markdown link and purpose text
-- no broken links in structural or external-context sections
+- no broken links in structural or context sections
+- ordinary inline links do not need to appear in `Dependencies` or `Related`
 - no implicit filesystem discovery is required to understand the unit
 
 Fix in this order:
@@ -197,7 +210,7 @@ Fix in this order:
 3. malformed `Source:`
 4. broken links
 5. graph cycles or wrong hierarchy
-6. malformed external-context tables
+6. malformed context tables
 7. duplicate inline/extracted truth
 8. vague names or needless depth
 
@@ -210,7 +223,7 @@ Backlinks are optional and non-canonical. If needed, generate them outside sourc
 Report:
 
 - final tree
-- external context sections touched
+- context sections touched
 - validation result
 - files changed
 - any intentionally inline large section and why it stayed inline
