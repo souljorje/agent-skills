@@ -2,7 +2,7 @@
 name: agentic-markdown
 description: "Maintains Markdown docs as explicit agent-readable context trees. Use when the user asks to create or update Markdown docs, split a large Markdown file, normalize or improve documentation structure, repair broken document trees, or make agent navigation explicit. Do not use for general prose editing, marketing copy, or unlinked repo-wide documentation cleanup."
 metadata:
-  version: "2.0.3"
+  version: "2.1.0"
   last_updated: "2026-06-02"
 ---
 
@@ -195,6 +195,28 @@ When converting legacy Markdown that uses multiple top-level `#` headings:
 Folder-backed topics are just units whose entrypoint is `index.md`; directories are never traversed implicitly.
 
 Shared reference files that are needed for interpretation but are not owned by the current tree should stay outside the tree and be listed in `Dependencies`. Do not absorb or duplicate them only to avoid a context section.
+
+## Presenting data
+
+- present a comparison or dataset as a Markdown table; do not flatten a real comparison into prose
+- a table needs real values: when the source only names a comparison but the numbers are absent, do not fabricate a skeleton with blank, `—`, or "not provided" cells, and do not invent figures — state in prose that the source references it and the figures are missing, and leave a clearly labeled stub
+- for a relationship, flow, or structure rather than exact figures, use a fenced `mermaid` block (flowchart, sequence, state); keep the underlying facts in Markdown alongside it
+- stay in Markdown; do not reach for HTML — no view needs special rules, and neither does any other format
+
+Absent data, a stub rather than an empty table:
+
+```md
+The source compares three caching strategies (no cache, 5-minute TTL,
+write-through) on p50/p95 latency and cost, but gives no numbers.
+TODO: add the comparison table here once the figures are available.
+```
+
+Structure as a diagram, facts still in Markdown:
+
+```mermaid
+flowchart LR
+  gateway --> quote_builder --> discount_resolver --> rate_service
+```
 
 ## Validation
 
