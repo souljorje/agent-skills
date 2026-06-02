@@ -2,7 +2,7 @@
 name: agentic-markdown
 description: "Maintains Markdown docs as explicit agent-readable context trees. Use when the user asks to create or update Markdown docs, split a large Markdown file, normalize or improve documentation structure, repair broken document trees, or make agent navigation explicit. Do not use for general prose editing, marketing copy, or unlinked repo-wide documentation cleanup."
 metadata:
-  version: "2.0.2"
+  version: "2.0.3"
   last_updated: "2026-06-02"
 ---
 

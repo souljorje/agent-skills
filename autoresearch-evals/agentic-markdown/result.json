@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "skill": "agentic-markdown",
   "skill_path": "skills/agentic-markdown/SKILL.md",
-  "skill_version_tested": "2.0.2",
+  "skill_version_tested": "2.0.3",
   "updated_at": "2026-06-02",
   "latest_average": 9.5,
   "results": {
