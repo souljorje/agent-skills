@@ -2,8 +2,8 @@
 name: skill-autoresearch
 description: Use this skill when building or revising a skill and you need iterative executor runs, scored confusion logs, targeted fixes, and reruns against multiple briefs until stop criteria are met. Inspired by Karpathy's autoresearch.
 metadata:
-  version: "1.2.0"
-  last_updated: "2026-04-23"
+  version: "1.2.1"
+  last_updated: "2026-06-02"
   forked_from: "https://github.com/Pvragon/ai-workspace-reference/blob/main/team-lib/skills/skill-autoresearch/SKILL.md"
 ---
 
@@ -223,6 +223,7 @@ Requirements:
 Before launching:
 - If persisted fixtures or scripts exist, copy them into the worktree or run them there.
 - Otherwise create the scenario setup directly in the isolated worktree for that run only.
+- Any fixture setup script that writes files must be run from a fresh temporary directory inside the isolated worktree, not from the repo root. Remove that temporary directory after the executor finishes.
 - Start from the brief and fixture inputs only; do not preload prior execution artifacts.
 - Keep skill fixes generic. The goal is to improve the skill, not to optimize for one scenario's wording.
 

@@ -14,6 +14,7 @@ Personal repo for authored agent skills and their eval briefs.
 - Do not edit autoresearch-evals/ manually outside of `skill-autoresearch` context
 - When the user asks to run tests or evals, always use `skill-autoresearch`
 - `skill-autoresearch` runs must use separate executor subagents in isolated worktrees, with end-to-end execution and a confusion log for every step
+- Any eval fixture setup or local smoke-test that writes files must run inside a fresh temporary directory, not the project root, and that temporary directory must be removed after the run
 
 ## Development
 
