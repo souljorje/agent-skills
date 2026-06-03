@@ -206,7 +206,7 @@ Pick the simplest format that makes the content easier to scan, compare, or reus
 | Show a small set of related points | Bullet list | Rules, examples, properties, options | Order matters |
 | Show ordered steps | Numbered list | Procedures, algorithms, setup steps | Steps are independent |
 | Show pass/fail items | Checklist | Validation, review, completion criteria | Items need explanation or comparison |
-| Compare things across the same fields | Table | Options, tradeoffs, decision matrices | Cells become long paragraphs |
+| Compare things across the same fields | Table | Options, tradeoffs, decision matrices with meaningful cell values | Cells become long paragraphs or most cells are empty/unknown |
 | Define terms | Definition list or table | Glossaries, field meanings, concepts | Definitions are long enough to need sections |
 | Show hierarchy | Tree or nested list | File structure, ownership, parent/child relations | Relationships are not hierarchical |
 | Show flow over time | Flowchart | Workflows, traversal, decision paths | The sequence is simple enough for a numbered list |
@@ -216,9 +216,9 @@ Pick the simplest format that makes the content easier to scan, compare, or reus
 | Highlight a rule or warning | Callout / short note | Constraints, exceptions, safety rules | Everything is becoming a callout |
 | Present rich or sortable data | Markdown table (add a `mermaid` diagram if the shape matters) | Dashboards, large or scannable datasets, reports | A sentence conveys it |
 
-One rule overrides the table:
+Follow this rules:
 
-- **Absent data is not a table.** When a comparison or dataset is named but its numbers are absent, write prose plus a clearly labeled stub — never a table skeleton with blank, `—`, or "not provided" cells, and never invented figures.
+- **Absent data is not a table.** When a comparison or dataset is named but its values are absent, write prose plus a clearly labeled data gap or measurement stub. Do not create a table skeleton with blank, `—`, `TBD`, `N/A`, or “not provided” cells, and do not invent figures.
 
 ## Validation
 
