@@ -2,7 +2,7 @@
 name: agentic-markdown
 description: "Maintains Markdown docs as explicit agent-readable context trees. Use when the user asks to create or update Markdown docs, split a large Markdown file, normalize or improve documentation structure, repair broken document trees, or make agent navigation explicit. Do not use for general prose editing, marketing copy, or unlinked repo-wide documentation cleanup."
 metadata:
-  version: "2.0.3"
+  version: "2.1.0"
   last_updated: "2026-06-02"
 ---
 
@@ -195,6 +195,30 @@ When converting legacy Markdown that uses multiple top-level `#` headings:
 Folder-backed topics are just units whose entrypoint is `index.md`; directories are never traversed implicitly.
 
 Shared reference files that are needed for interpretation but are not owned by the current tree should stay outside the tree and be listed in `Dependencies`. Do not absorb or duplicate them only to avoid a context section.
+
+## Choosing a Content Format
+
+Pick the simplest format that makes the content easier to scan, compare, or reuse.
+
+| Need | Use | Good for | Avoid when |
+|---|---|---|---|
+| Explain one idea or give context | Prose paragraph | Overview, rationale, caveats | The content has many parallel items |
+| Show a small set of related points | Bullet list | Rules, examples, properties, options | Order matters |
+| Show ordered steps | Numbered list | Procedures, algorithms, setup steps | Steps are independent |
+| Show pass/fail items | Checklist | Validation, review, completion criteria | Items need explanation or comparison |
+| Compare things across the same fields | Table | Options, tradeoffs, decision matrices with meaningful cell values | Cells become long paragraphs or most cells are empty/unknown |
+| Define terms | Definition list or table | Glossaries, field meanings, concepts | Definitions are long enough to need sections |
+| Show hierarchy | Tree or nested list | File structure, ownership, parent/child relations | Relationships are not hierarchical |
+| Show flow over time | Flowchart | Workflows, traversal, decision paths | The sequence is simple enough for a numbered list |
+| Show states and transitions | State diagram | Lifecycle, statuses, process states | States are informal or few |
+| Show many-to-many relationships | Graph diagram | Dependencies, references, system links | The graph is too dense to read |
+| Show exact syntax | Code block | Templates, examples, commands, frontmatter | The content is conceptual, not literal |
+| Highlight a rule or warning | Callout / short note | Constraints, exceptions, safety rules | Everything is becoming a callout |
+| Present rich or sortable data | Markdown table (add a `mermaid` diagram if the shape matters) | Dashboards, large or scannable datasets, reports | A sentence conveys it |
+
+Follow this rules:
+
+- **Absent data is not a table.** When a comparison or dataset is named but its values are absent, write prose plus a clearly labeled data gap or measurement stub. Do not create a table skeleton with blank, `—`, `TBD`, `N/A`, or “not provided” cells, and do not invent figures.
 
 ## Validation
 
