@@ -1,8 +1,6 @@
 # Agent Skills 🤖
 
-A personal collection of [Agent Skills](https://agentskills.io/home) crafted by [Georgii Bukharov](https://github.com/souljorje).
-
-No scripts, just pure markdown.
+A collection of [Agent Skills](https://agentskills.io/home) crafted by [Georgii Bukharov](https://github.com/souljorje) & community for daily egineering use
 
 ## Skills
 
