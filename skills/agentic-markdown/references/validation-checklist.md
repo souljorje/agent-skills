@@ -2,6 +2,14 @@
 
 This is the required final pass after restructuring or updating a unit. Use it every time before finishing. Do not skip it.
 
+Optional: a runnable linter mechanizes the structural checks below. Run it as a first pass, then read for meaning:
+
+```
+node skills/agentic-markdown/scripts/lint.mjs <wiki-root>/index.md
+```
+
+It checks frontmatter, the `Source:` tree, links and anchors, duplicate entrypoints, and cycles, and exits non-zero on errors. It does not judge meaning — contradictions, stale claims, and duplicated facts still need a read.
+
 ## Structure
 
 - exactly one entrypoint per unit: `name.md` or `name/index.md`
