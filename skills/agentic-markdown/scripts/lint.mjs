@@ -111,17 +111,50 @@ function stripCodeFencesKeepingLines(text) {
     .join("\n");
 }
 
+function stripInlineCode(line) {
+  // Blank out inline code spans (`x`, ``x``) so link-looking text inside them is
+  // not parsed as a real link. Replace with equal-length spaces to keep columns.
+  return line.replace(/(`+)(?:(?!\1).)*\1/g, (match) => " ".repeat(match.length));
+}
+
+function normalizeInlineText(text) {
+  // Strip inline Markdown formatting so a `# `code` heading` compares equal to a
+  // plain frontmatter title. Backticks, bold/italic, strikethrough markers.
+  return text
+    .replace(/`+/g, "")
+    .replace(/\*\*|\*|__|_|~~/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function parseFrontmatter(text) {
-  const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
+  const match = text.replace(/^\uFEFF/, "").match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!match) return null;
 
   const data = {};
+  const lines = match[1].split(/\r?\n/);
 
-  for (const line of match[1].split(/\r?\n/)) {
-    const field = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
+  for (let i = 0; i < lines.length; i++) {
+    const field = lines[i].match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
     if (!field) continue;
 
-    data[field[1]] = field[2].trim();
+    let value = field[2].trim();
+
+    // Normalize a block-style list (key:\n  - a\n  - b) to inline [a, b].
+    if (value === "") {
+      const items = [];
+      let j = i + 1;
+      while (j < lines.length && /^\s+-\s+/.test(lines[j])) {
+        items.push(lines[j].replace(/^\s+-\s+/, "").trim());
+        j++;
+      }
+      if (items.length) {
+        value = `[${items.join(", ")}]`;
+        i = j - 1;
+      }
+    }
+
+    data[field[1]] = value;
   }
 
   return data;
@@ -139,13 +172,18 @@ function slugifyHeading(text) {
 
 function headingAnchors(text) {
   const anchors = new Set();
+  const counts = new Map();
   const clean = stripCodeFencesKeepingLines(text);
 
   for (const line of clean.split(/\r?\n/)) {
     const match = line.match(/^#{1,6}\s+(.+)$/);
-    if (match) {
-      anchors.add(slugifyHeading(match[1]));
-    }
+    if (!match) continue;
+
+    // Match GitHub: duplicate headings get -1, -2, ... suffixes.
+    const base = slugifyHeading(match[1]);
+    const seen = counts.get(base) ?? 0;
+    counts.set(base, seen + 1);
+    anchors.add(seen === 0 ? base : `${base}-${seen}`);
   }
 
   return anchors;
@@ -276,19 +314,20 @@ function checkFrontmatterAndHeading(file, text) {
     if (!frontmatter) {
       addIssue("error", "frontmatter", file, 1, "Missing leading frontmatter block.");
     } else {
-      if (!frontmatter.title) {
+      const titleValue = (frontmatter.title ?? "").replace(/^["']|["']$/g, "").trim();
+      if (!titleValue) {
         addIssue("error", "frontmatter", file, 1, "Missing required `title`.");
       }
 
       if (!("tags" in frontmatter)) {
         addIssue("error", "frontmatter", file, 1, "Missing required `tags`.");
-      } else if (!/^\[.*\]$/.test(frontmatter.tags)) {
+      } else if (frontmatter.tags !== "" && !/^\[.*\]$/.test(frontmatter.tags)) {
         addIssue(
           "error",
           "frontmatter",
           file,
           1,
-          "`tags` must be an inline list, for example `tags: [docs, guide]`."
+          "`tags` must be a list, for example `tags: [docs, guide]` (may be empty)."
         );
       }
 
@@ -296,7 +335,7 @@ function checkFrontmatterAndHeading(file, text) {
         const heading = h1s[0][1].trim();
         const title = frontmatter.title.replace(/^["']|["']$/g, "").trim();
 
-        if (heading !== title) {
+        if (normalizeInlineText(heading) !== normalizeInlineText(title)) {
           addIssue(
             "warn",
             "heading",
@@ -314,6 +353,43 @@ function checkFrontmatterAndHeading(file, text) {
   }
 }
 
+function tableRowCells(row) {
+  let r = row.trim();
+  if (r.startsWith("|")) r = r.slice(1);
+  if (r.endsWith("|")) r = r.slice(0, -1);
+  return r.split("|").map((c) => c.trim());
+}
+
+function checkContextTables(file, text) {
+  const lines = stripCodeFencesKeepingLines(text).split(/\r?\n/);
+
+  for (let i = 0; i < lines.length; i++) {
+    const heading = lines[i].match(/^##\s+(Dependencies|Related)\s*$/);
+    if (!heading) continue;
+
+    const name = heading[1];
+
+    let j = i + 1;
+    while (j < lines.length && !lines[j].trim()) j++;
+
+    if (j >= lines.length || !lines[j].includes("|")) {
+      addIssue("warn", "context-table", file, i + 1, `\`${name}\` section has no table.`);
+      continue;
+    }
+
+    const header = tableRowCells(lines[j]);
+    const separator = tableRowCells(lines[j + 1] ?? "");
+    const validSeparator =
+      separator.length === header.length && separator.every((c) => /^:?-+:?$/.test(c));
+
+    if (header.length !== 2 || header[0] !== "Document" || header[1] !== "Purpose") {
+      addIssue("error", "context-table", file, j + 1, `\`${name}\` must be a two-column table with \`Document\` and \`Purpose\` headers.`);
+    } else if (!validSeparator) {
+      addIssue("error", "context-table", file, j + 2, `\`${name}\` table needs a \`|---|---|\` separator row.`);
+    }
+  }
+}
+
 async function checkDeadLinksAndSource(file, text) {
   const clean = stripCodeFencesKeepingLines(text);
   const lines = clean.split(/\r?\n/);
@@ -323,7 +399,7 @@ async function checkDeadLinksAndSource(file, text) {
     const line = lines[i];
     const lineNo = i + 1;
 
-    for (const link of parseMarkdownLinks(line)) {
+    for (const link of parseMarkdownLinks(stripInlineCode(line))) {
       const resolved = await resolveLocalTarget(file, link.target);
 
       if (resolved.kind === "missing") {
@@ -548,6 +624,7 @@ async function main() {
 
     if (text) {
       checkFrontmatterAndHeading(file, text);
+      checkContextTables(file, text);
     }
   }
 
