@@ -1,8 +1,60 @@
 #!/usr/bin/env node
+/**
+ * agentic-markdown linter — structural validation for a Markdown context tree.
+ *
+ * No dependencies, location-agnostic: run it from anywhere and pass the wiki to
+ * check. It mechanizes the structural half of the validation checklist; meaning
+ * (contradictions, stale claims, duplicated facts) still needs a human/agent read.
+ *
+ * Usage:
+ *   node lint.mjs [root-entrypoint] [--check-unreferenced] [--check-all-entrypoints]
+ *   node lint.mjs --help
+ *
+ *   root-entrypoint           Root of the wiki to check (default: ./index.md). The
+ *                             script scans that file's directory recursively.
+ *   --check-unreferenced      Also warn about .md files with no inbound links.
+ *   --check-all-entrypoints   Validate every .md file, not only those reachable
+ *                             from the root via Source: links.
+ *
+ * Exit code is non-zero when any error-level issue is found (warnings do not fail).
+ *
+ * Checks:
+ *   frontmatter           required `title` + `tags` (list; may be empty), exactly one
+ *                         top-level `#`, title vs heading match (warn). Agent-control
+ *                         files (SKILL.md, AGENTS.md, CLAUDE.md, GEMINI.md, …) are
+ *                         exempt from frontmatter.
+ *   source                every `Source:` sits under a section heading, has a one/two
+ *                         line description, and points to a relative Markdown entrypoint.
+ *   dead-link             broken relative links and broken `#anchors` (incl. in Source:).
+ *   source-cycle          cycles in the `Source:` graph.
+ *   duplicate-entrypoint  both `name.md` and `name/index.md` exist for one unit.
+ *   context-table         `Dependencies` / `Related` are two-column `Document | Purpose`.
+ *   unreferenced-file     (with --check-unreferenced) .md with no inbound links.
+ */
 import fs from "node:fs/promises";
 import path from "node:path";
 
 const args = process.argv.slice(2);
+
+if (args.includes("--help") || args.includes("-h")) {
+  console.log(
+    [
+      "agentic-markdown linter",
+      "",
+      "Usage: node lint.mjs [root-entrypoint] [--check-unreferenced] [--check-all-entrypoints]",
+      "",
+      "  root-entrypoint           wiki root to check (default: ./index.md)",
+      "  --check-unreferenced      warn about .md files with no inbound links",
+      "  --check-all-entrypoints   validate every .md file, not just those reachable from root",
+      "  -h, --help                show this help",
+      "",
+      "Exits non-zero if any error is found. Checks: frontmatter, Source: tree,",
+      "dead links/anchors, Source cycles, duplicate entrypoints, context tables.",
+    ].join("\n"),
+  );
+  process.exit(0);
+}
+
 const rootArg = args.find((arg) => !arg.startsWith("--")) ?? "index.md";
 
 const checkUnreferenced = args.includes("--check-unreferenced");
